@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parse } from '../src/parser.js';
 import { tokenize } from '../src/lexer.js';
-import type { ComponentNode } from '../src/types.js';
+import type { ComponentNode, IterationNode, ConditionalNode } from '../src/types.js';
 
 function p(input: string): ComponentNode {
   return parse(tokenize(input)) as ComponentNode;
@@ -81,5 +81,63 @@ describe('WFL Parser', () => {
     const child2 = ast.children[1] as ComponentNode;
     expect(child1.element).toBe('txt');
     expect(child2.element).toBe('txt');
+  });
+
+  it('parses animation directives on component', () => {
+    const ast = p('btn::pri ~fade300 ~bounce');
+    expect(ast.animations).toEqual(['~fade300', '~bounce']);
+  });
+
+  it('parses component with animation and content', () => {
+    const ast = p('txt::h1 ~fade:"Hello"');
+    expect(ast.animations).toContain('~fade');
+    expect(ast.content).toBe(':"Hello"');
+  });
+
+  it('parses iteration *3 > card', () => {
+    const ast = parse(tokenize('*3 > card'));
+    expect(ast.type).toBe('iteration');
+    if (ast.type === 'iteration') {
+      expect(ast.source).toEqual({ kind: 'literal', count: 3 });
+      expect(ast.child.type).toBe('component');
+    }
+  });
+
+  it('parses state-based iteration *@todos > card', () => {
+    const ast = parse(tokenize('*@todos > card'));
+    expect(ast.type).toBe('iteration');
+    if (ast.type === 'iteration') {
+      expect(ast.source).toEqual({ kind: 'stateRef', name: '@todos' });
+    }
+  });
+
+  it('parses conditional ?@user | avatar', () => {
+    const ast = parse(tokenize('?@user | ava'));
+    expect(ast.type).toBe('conditional');
+    if (ast.type === 'conditional') {
+      expect(ast.variable).toBe('?@user');
+      expect(ast.trueBranch.type).toBe('component');
+      expect(ast.falseBranch).toBeNull();
+    }
+  });
+
+  it('parses parenthesized group as synthetic wrapper', () => {
+    const ast = parse(tokenize('nav > (btn::pri + btn::sec)'));
+    expect(ast.type).toBe('component');
+    if (ast.type === 'component') {
+      expect(ast.element).toBe('nav');
+      expect(ast.children).toHaveLength(1);
+      const group = ast.children[0];
+      if ('children' in group) {
+        expect((group as any).children).toHaveLength(2);
+      }
+    }
+  });
+
+  it('parses [header] slot on children', () => {
+    const ast = p('card > [header]txt::h1:"Title" [body]txt::p:"Content"');
+    expect(ast.children).toHaveLength(2);
+    expect((ast.children[0] as any).slot).toBe('header');
+    expect((ast.children[1] as any).slot).toBe('body');
   });
 });

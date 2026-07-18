@@ -1,4 +1,5 @@
 import { ResolvedComponent, PropValue } from './types.js';
+import { collectAnimationCss } from './animate.js';
 
 export interface Import {
   path: string;
@@ -8,6 +9,8 @@ export interface Import {
 export interface GeneratedOutput {
   imports: Import[];
   jsx: string;
+  css: string;
+  stateCode: string;
 }
 
 function formatPropValue(value: PropValue): string {
@@ -16,13 +19,74 @@ function formatPropValue(value: PropValue): string {
   return `{${value}}`; // boolean
 }
 
+// Walk resolved tree to collect all animation tokens
+function collectAnimationTokens(node: ResolvedComponent): string[] {
+  const tokens = [...(node.animations || [])];
+  for (const child of node.children) {
+    tokens.push(...collectAnimationTokens(child));
+  }
+  return tokens;
+}
+
+// Walk resolved tree to collect all unique state variable names (without @)
+function collectStateVars(node: ResolvedComponent): Set<string> {
+  const vars = new Set<string>();
+  function walk(n: ResolvedComponent) {
+    if (n.state) vars.add(n.state.replace('@', ''));
+    for (const child of n.children) walk(child);
+    if (n.conditional?.falseBranch) walk(n.conditional.falseBranch);
+  }
+  walk(node);
+  return vars;
+}
+
 export function generate(component: ResolvedComponent): GeneratedOutput {
   const imports: Import[] = [];
   const jsx = generateJSX(component, imports);
-  return { imports, jsx };
+  const allTokens = collectAnimationTokens(component);
+  const css = collectAnimationCss(allTokens);
+  const stateVars = collectStateVars(component);
+  const stateCode = stateVars.size > 0
+    ? [...stateVars].map(v => `const [${v}, set${v.charAt(0).toUpperCase() + v.slice(1)}] = useState('')`).join('\n')
+    : '';
+  if (stateVars.size > 0) {
+    imports.push({ path: 'react', name: 'useState' });
+  }
+  return { imports, jsx, css, stateCode };
 }
 
-function generateJSX(node: ResolvedComponent, imports: Import[]): string {
+function generateJSX(node: ResolvedComponent, imports: Import[], depth: number = 0): string {
+  // Handle iteration (*N > comp or *@state > comp)
+  if (node.iteration) {
+    if (node.iteration.kind === 'literal') {
+      const count = node.iteration.count;
+      const childJsx = node.children.map(c => generateJSX(c, imports, depth)).join('\n');
+      return Array.from({ length: count }, () => childJsx).join('\n');
+    } else {
+      const stateVar = node.iteration.name.replace('@', '');
+      const varExpr = depth > 0 ? `item.${stateVar}` : stateVar;
+      const childJsx = node.children.map(c => generateJSX(c, imports, depth + 1)).join('\n');
+      const keyExpr = node.iterationKey ? `item.${node.iterationKey}` : 'i';
+      return `{${varExpr}.map((item, i) => <React.Fragment key={${keyExpr}}>${childJsx}</React.Fragment>)}`;
+    }
+  }
+
+  // Handle conditional (?@var | comp_a | comp_b)
+  if (node.conditional) {
+    const stateVar = node.conditional.variable.replace('?@', '');
+    const trueJsx = node.children.map(c => generateJSX(c, imports, depth)).join('\n');
+    if (node.conditional.falseBranch) {
+      const falseJsx = generateJSX(node.conditional.falseBranch, imports, depth);
+      return `{${stateVar} ? (${trueJsx}) : (${falseJsx})}`;
+    }
+    return `{${stateVar} && (${trueJsx})}`;
+  }
+
+  // Handle synthetic group (empty element name from parentheses)
+  if (!node.componentName) {
+    return node.children.map(c => generateJSX(c, imports, depth)).join('\n');
+  }
+
   // Collect unique imports
   if (!imports.some(i => i.path === node.importPath && i.name === node.componentName)) {
     imports.push({ path: node.importPath, name: node.componentName });
@@ -43,10 +107,26 @@ function generateJSX(node: ResolvedComponent, imports: Import[]): string {
     }
   }
 
+  // Auto-bind state variable to value prop
+  if (node.state) {
+    const varName = node.state.replace('@', '');
+    propParts.push(`value={${varName}}`);
+  }
+
+  // Separate slotted children (render as props) from inline children (render inside tags)
+  const slottedChildren = node.children.filter(c => c.slot);
+  const inlineChildren = node.children.filter(c => !c.slot);
+
+  // Add slotted children as JSX expression props: slotName={<Component>...</Component>}
+  for (const child of slottedChildren) {
+    const childJsx = generateJSX(child, imports, depth);
+    propParts.push(`${child.slot}={${childJsx}}`);
+  }
+
   const propsStr = propParts.join(' ');
 
-  // Build children JSX
-  const childrenStr = node.children.map(c => generateJSX(c, imports)).join('\n');
+  // Build inline children JSX
+  const childrenStr = inlineChildren.map(c => generateJSX(c, imports, depth)).join('\n');
 
   // Handle content
   const content = node.content ? node.content.replace(/^:"/, '').replace(/"$/, '') : '';
@@ -54,7 +134,16 @@ function generateJSX(node: ResolvedComponent, imports: Import[]): string {
   // Handle events
   const eventAttrs = node.events.map(e => {
     const handler = e.handler.replace('!', '');
-    return `${handler}={${e.callback}}`;
+    let callback = e.callback;
+    // Auto-wrap onChange when callback matches state setter
+    if (handler === 'onChange' && node.state) {
+      const varName = node.state.replace('@', '');
+      const setter = `set${varName.charAt(0).toUpperCase() + varName.slice(1)}`;
+      if (callback === setter) {
+        callback = `(e) => ${setter}(e.target.value)`;
+      }
+    }
+    return `${handler}={${callback}}`;
   }).join(' ');
 
   const allProps = [propsStr, eventAttrs].filter(Boolean).join(' ');

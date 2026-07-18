@@ -12,18 +12,23 @@ const patterns: Pattern[] = [
   { type: 'STATE', regex: /^@[a-zA-Z_][a-zA-Z0-9_]*/ },
   { type: 'THEME', regex: /^\$[a-zA-Z]+/ },
   { type: 'ITERATE', regex: /^\*@[a-zA-Z_][a-zA-Z0-9_]*|^\*\d+/ },
-  { type: 'CONDITIONAL', regex: /^\?@[a-zA-Z_][a-zA-Z0-9_]*/ },
+  { type: 'CONDITIONAL', regex: /^\?@[a-zA-Z_][a-zA-Z0-9_]*(\s*(?:>=|<=|==|!=|>|<)\s*(?:\d+|'[^']*'))?/ },
   { type: 'PIPE', regex: /^\|/ },
   { type: 'CONTENT', regex: /^:"[^"]*"/ },
   { type: 'STRING', regex: /^"[^"]*"/ },
   { type: 'MOD_SEP', regex: /^::/ },
   { type: 'CHILD', regex: /^>/ },
+  { type: 'LPAREN', regex: /^\(/ },
+  { type: 'RPAREN', regex: /^\)/ },
   { type: 'SIBLING_H', regex: /^\+/ },
   { type: 'SIBLING_V', regex: /^\^/ },
+  // ANIM matches ~-prefixed animation directives: ~fade, ~slide300, ~bounce, etc.
+  { type: 'SLOT', regex: /^\[[a-zA-Z_][a-zA-Z0-9_]*\]/ },
+  { type: 'ANIM', regex: /^~[a-zA-Z][a-zA-Z0-9]*/ },
   // TYPE matches known component codes (2-4 letter lowercase) when followed by an operator or end-of-input
-  { type: 'TYPE', regex: /^[a-z]{2,4}(?=::|>|\+|\^|\||:| |$)/ },
+  { type: 'TYPE', regex: /^[a-z]{2,}(?=::|>|\+|\^|\||:| |$)/ },
   // MOD catches everything else (modifier values, identifiers) after :: or where TYPE doesn't match
-  { type: 'MOD', regex: /^[a-zA-Z0-9#][a-zA-Z0-9#-]*/ },
+  { type: 'MOD', regex: /^[a-zA-Z0-9#][a-zA-Z0-9#.-]*/ },
 ];
 
 const commentPattern = /^# .*$/m; // requires space after # (avoids eating hex colors like #000)
@@ -61,9 +66,10 @@ export function tokenize(input: string): Token[] {
         // Update typeEnabled based on what was matched
         if (type === 'MOD_SEP') {
           typeEnabled = false; // TYPE not valid after ::
-        } else if (type === 'TYPE' || type === 'CHILD' || type === 'SIBLING_H' || type === 'SIBLING_V' || type === 'PIPE') {
+        } else if (type === 'TYPE' || type === 'CHILD' || type === 'SIBLING_H' || type === 'SIBLING_V' || type === 'PIPE' || type === 'SLOT') {
           typeEnabled = true; // TYPE valid after component/child/sibling/pipe
         }
+        // ANIM doesn't change typeEnabled — animations are component modifiers
         break;
       }
     }

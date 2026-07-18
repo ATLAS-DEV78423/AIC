@@ -1,37 +1,68 @@
 # AIC Development Loop — State
 
-**Last run:** 2026-07-18T12:15:00Z
-**Current phase:** Phase 0 — Validation (complete)
-**Tasks completed:** 10/10
-**Current task:** None — Phase 0 complete
+**Last run:** 2026-07-18T15:20:00Z
+**Current phase:** Phase 7 — Language Completeness (✅ complete)
+**Tasks completed:** 3/3
 
-## Task Status
+## Phase 6 Tasks
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 1 | Project Setup | ✅ Done | |
-| 2 | Type Definitions | ✅ Done | |
-| 3 | Lexer | ✅ Done | |
-| 4 | Parser | ✅ Done | |
-| 5 | Component Registry | ✅ Done | 20 core components |
-| 6 | Resolver | ✅ Done | |
-| 7 | Generator | ✅ Done | React/JSX output |
-| 8 | Integration Tests + CLI | ✅ Done | |
-| 9 | AI System Prompt | ✅ Done | ~500 token prompt |
-| 10 | Validation Harness | ✅ Done | 5 scenarios, 2.9-5.2:1 compression |
+| 1 | Extendable Registry (2.2) | ✅ Done | `mergeRegistries()`, `compile(source, registry?)`, CLI `--registry` flag |
+| 2 | Component Slots (2.1) | ✅ Done | `[slotName]` syntax, parsed as child slot, rendered as JSX prop |
+| 3 | Phase 6 Tests | ✅ Done | 3 new tests (lexer SLOT, parser slot, integration slot compilation) |
 
-## Phase 0 Results
+## Phase 5 Tasks
 
-- **Total tests**: 46 (45 vitest + 1 validation harness)
-- **All passing**: ✅
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | formatComponentOutput() | ✅ Done | Wraps compiled output in complete .tsx file |
+| 2 | CLI File I/O | ✅ Done | `wfl compile`, `--out`, `wfl build` |
+| 3 | Tests | ✅ Done | 5 new integration tests |
+
+## Phase 4 Tasks
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | Smart Event Binding | ✅ Done | onChange → (e) => setVar(e.target.value) |
+| 2 | Iteration Keys ($key) | ✅ Done | $key::id → item.id as React key |
+
+## Phase 3 Tasks
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | Auto State-Value Binding | ✅ Done | `@var` → auto `value={var}` |
+| 2 | Default Content | ✅ Done | defaultContent on registry entries |
+
+## Phase 2 Tasks
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1-9 | All Phase 2 | ✅ Done | Iteration, conditionals, state, edits, forms, parens, integration |
+
+## Phase 6 Results
+
+- **Total tests**: 92 vitest — all passing ✅
 - **TypeScript**: Compiles clean
-- **Compression ratio**: 2.9:1 to 5.2:1 (character-based proxy)
-- **CLI**: Working and verified
+- **Changes**: SLOT token type, slot field on ComponentNode/ResolvedComponent, implicit sibling handling in parser, slot-as-prop rendering in generator, TYPE regex extended for custom component names, `mergeRegistries`/optional registry on `compile()`, CLI `--registry` flag
 
-## Next: Phase 1
+## Phase 7 Tasks
 
-Phase 1 should focus on:
-- Animation support (transition tokens, micro-interactions)
-- Multi-line/multi-component input handling
-- Rich component registry (more tokens, better default styling)
-- AI integration testing (measure AI agent WFL accuracy)
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | Expression conditionals (4.3) | ✅ Done | `?@count > 0`, `?@role == 'admin'` — comparison operators in conditionals |
+| 2 | Nested iteration (4.1) | ✅ Done | `*@categories > *@items > card` — depth tracking in generator, inner prefix `item.` |
+| 3 | Error recovery (4.4) | ✅ Done | Position context in parser errors, known components listed in resolver errors |
+
+## Phase 7 Results
+
+- **Total tests**: 96 vitest — all passing ✅
+- **TypeScript**: Compiles clean
+- **Changes**: `generateJSX` depth parameter for scoped iteration, `resolveIteration` key propagation fix, better error messages with token positions and known-component suggestions
+
+## Phase 8 Plan
+
+Phase 8: DX & Ecosystem — per gaps.md roadmap:
+- README / language reference (7.1, 7.3) — the docs are the DX
+- CLI polish (5.5) — watch mode if feasible
+- Publish readiness — package.json bin, GitHub push

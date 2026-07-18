@@ -93,4 +93,20 @@ describe('WFL Lexer', () => {
     const tokens = tokenize('  btn::pri  ');
     expect(tokens[0]).toEqual({ type: 'TYPE', value: 'btn', position: 2 });
   });
+
+  it('tokenizes animation directives', () => {
+    const tokens = tokenize('btn::pri ~fade300 ~bounce');
+    expect(tokens).toContainEqual({ type: 'ANIM', value: '~fade300', position: 9 });
+    expect(tokens).toContainEqual({ type: 'ANIM', value: '~bounce', position: 18 });
+  });
+
+  it('tokenizes bare fade animation', () => {
+    const tokens = tokenize('txt ~fade');
+    expect(tokens).toContainEqual({ type: 'ANIM', value: '~fade', position: 4 });
+  });
+
+  it('tokenizes slot syntax [header]', () => {
+    const tokens = tokenize('[header]');
+    expect(tokens).toContainEqual({ type: 'SLOT', value: '[header]', position: 0 });
+  });
 });

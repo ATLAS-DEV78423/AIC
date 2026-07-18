@@ -14,7 +14,11 @@ export type TokenType =
   | 'CONDITIONAL'// ?@var
   | 'PIPE'       // |  (conditional separator)
   | 'THEME'      // $thm, $col (style/theme prefix)
-  | 'MOD_SEP';   // ::  (modifier chain separator)
+  | 'MOD_SEP'    // ::  (modifier chain separator)
+  | 'ANIM'       // ~fade, ~slide300 (animation directives)
+  | 'LPAREN'     // (
+  | 'RPAREN'     // )
+  | 'SLOT';      // [header]
 
 export interface Token {
   type: TokenType;
@@ -47,7 +51,9 @@ export interface ComponentNode {
   type: 'component';
   element: string;      // btn, nav, txt
   modifiers: string[];  // [pri, lg]
+  animations: string[]; // [~fade, ~slide300]
   content: string | null; // "Get Started" or null
+  slot?: string | null;   // "header", "body", etc. — null/undefined for default slot
   children: ASTNode[];
   edits: EditNode[];
   events: EventNode[];
@@ -101,11 +107,14 @@ export interface ResolvedComponent {
   importPath: string;
   props: Record<string, PropValue>;
   className: string;
+  animations: string[]; // animation tokens still attached for CSS generation
   content: string | null;
+  slot?: string | null;
   children: ResolvedComponent[];
   events: { handler: string; callback: string }[];
   state: string | null;
   iteration: IterationSource | null;
+  iterationKey: string | null; // property name from $key edit (e.g. 'id' → item.id)
   conditional: { variable: string; falseBranch: ResolvedComponent | null } | null;
 }
 

@@ -43,10 +43,28 @@ const scenarios: TestScenario[] = [
     expectedComponents: ['Stack', 'Badge', 'Text'],
     minimumCompression: 2,
   },
+  {
+    name: 'Animated hero page',
+    wfl: 'sec::hero::dk > stk::v::ctr > txt::h1::xl ~fade:"Build with AI" ^ txt::sub ~slide:"Ship faster" ^ btn::pri::lg ~bounce:"Get Started"',
+    expectedComponents: ['Section', 'Stack', 'Text', 'Button'],
+    minimumCompression: 2,
+  },
+  {
+    name: 'Iterated cards',
+    wfl: '*3 > card > stk::v::ctr > txt::h1:"Item" ^ btn::pri:"View"',
+    expectedComponents: ['Card', 'Stack', 'Text', 'Button'],
+    minimumCompression: 2,
+  },
+  {
+    name: 'Conditional avatar',
+    wfl: '?@user | ava | btn::pri:"Login"',
+    expectedComponents: ['Avatar', 'Button'],
+    minimumCompression: 2,
+  },
 ];
 
 console.log('═'.repeat(60));
-console.log('  WFL Validation Harness — Phase 0');
+console.log('  WFL Validation Harness — Phase 1');
 console.log('═'.repeat(60));
 
 let passed = 0;

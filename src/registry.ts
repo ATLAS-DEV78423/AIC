@@ -6,6 +6,7 @@ export const REGISTRY: Registry = {
     component: 'Button',
     importPath: '@/components/ui/button',
     defaultProps: { variant: 'default', size: 'default' },
+    defaultContent: 'Button',
     variantProps: {
       pri: { variant: 'primary' },
       sec: { variant: 'secondary' },
@@ -151,6 +152,7 @@ export const REGISTRY: Registry = {
     component: 'Text',
     importPath: '@/components/typography/text',
     defaultProps: { as: 'p' },
+    defaultContent: 'Text',
     variantProps: {
       h1: { as: 'h1' },
       h2: { as: 'h2' },
@@ -225,8 +227,185 @@ export const REGISTRY: Registry = {
     variantProps: {},
     modifiers: {},
   },
+
+  // ── Phase 1: Enhanced Registry ──
+  hero: {
+    component: 'HeroSection',
+    importPath: '@/components/layout/hero-section',
+    defaultProps: {},
+    variantProps: {
+      cen: { className: 'text-center items-center' },
+      left: { className: 'text-left items-start' },
+      dk: { className: 'bg-slate-900 text-white' },
+    },
+    modifiers: {
+      cen: { className: 'text-center items-center' },
+      left: { className: 'text-left items-start' },
+      dk: { className: 'bg-slate-900 text-white' },
+    },
+  },
+  feat: {
+    component: 'FeatureGrid',
+    importPath: '@/components/layout/feature-grid',
+    defaultProps: { columns: 3 },
+    variantProps: {
+      '3': { columns: 3 },
+      '2': { columns: 2 },
+      '4': { columns: 4 },
+    },
+    modifiers: {
+      '3': { prop: 'columns', value: 3 },
+      '2': { prop: 'columns', value: 2 },
+      '4': { prop: 'columns', value: 4 },
+    },
+  },
+  cta: {
+    component: 'CallToAction',
+    importPath: '@/components/layout/cta-section',
+    defaultProps: {},
+    variantProps: {
+      cen: { className: 'text-center' },
+      dk: { className: 'bg-slate-900 text-white' },
+      lg: { className: 'py-24 px-8' },
+    },
+    modifiers: {
+      cen: { className: 'text-center' },
+      dk: { className: 'bg-slate-900 text-white' },
+      lg: { className: 'py-24 px-8' },
+    },
+  },
+  ft: {
+    component: 'Footer',
+    importPath: '@/components/layout/footer',
+    defaultProps: {},
+    variantProps: {
+      dk: { className: 'bg-slate-900 text-white' },
+      cen: { className: 'text-center' },
+      sm: { className: 'py-8 text-sm' },
+    },
+    modifiers: {
+      dk: { className: 'bg-slate-900 text-white' },
+      cen: { className: 'text-center' },
+      sm: { className: 'py-8 text-sm' },
+    },
+  },
+  tab: {
+    component: 'Tabs',
+    importPath: '@/components/ui/tabs',
+    defaultProps: {},
+    variantProps: {},
+    modifiers: {},
+  },
+  lst: {
+    component: 'List',
+    importPath: '@/components/ui/list',
+    defaultProps: { as: 'ul' },
+    variantProps: {
+      ul: { as: 'ul' },
+      ol: { as: 'ol' },
+    },
+    modifiers: {
+      ul: { prop: 'as', value: 'ul' },
+      ol: { prop: 'as', value: 'ol' },
+    },
+  },
+  div: {
+    component: 'Divider',
+    importPath: '@/components/ui/divider',
+    defaultProps: {},
+    variantProps: {
+      sm: { className: 'my-4' },
+      lg: { className: 'my-12' },
+    },
+    modifiers: {
+      sm: { className: 'my-4' },
+      lg: { className: 'my-12' },
+    },
+  },
+  spn: {
+    component: 'Spinner',
+    importPath: '@/components/ui/spinner',
+    defaultProps: { size: 'default' },
+    variantProps: {
+      sm: { size: 'sm' },
+      lg: { size: 'lg' },
+      col: { className: 'text-current' },
+    },
+    modifiers: {
+      sm: { prop: 'size', value: 'sm' },
+      lg: { prop: 'size', value: 'lg' },
+      col: { className: 'text-current' },
+    },
+  },
+
+  // ── Phase 2: Form Components ──
+  frm: {
+    component: 'Form',
+    importPath: '@/components/ui/form',
+    defaultProps: { method: 'POST' },
+    variantProps: {},
+    modifiers: {},
+  },
+  lbl: {
+    component: 'Label',
+    importPath: '@/components/ui/label',
+    defaultProps: {},
+    variantProps: {},
+    modifiers: {},
+  },
+  txa: {
+    component: 'Textarea',
+    importPath: '@/components/ui/textarea',
+    defaultProps: { rows: 4 },
+    variantProps: {
+      sm: { rows: 2 },
+      lg: { rows: 8 },
+    },
+    modifiers: {
+      sm: { prop: 'rows', value: 2 },
+      lg: { prop: 'rows', value: 8 },
+    },
+  },
+  chk: {
+    component: 'Checkbox',
+    importPath: '@/components/ui/checkbox',
+    defaultProps: {},
+    variantProps: {},
+    modifiers: {},
+  },
+  swt: {
+    component: 'Switch',
+    importPath: '@/components/ui/switch',
+    defaultProps: {},
+    variantProps: {
+      sm: { className: 'h-4 w-8' },
+      lg: { className: 'h-6 w-12' },
+    },
+    modifiers: {
+      sm: { className: 'h-4 w-8' },
+      lg: { className: 'h-6 w-12' },
+    },
+  },
+  rad: {
+    component: 'RadioGroup',
+    importPath: '@/components/ui/radio-group',
+    defaultProps: {},
+    variantProps: {
+      h: { direction: 'row' },
+      v: { direction: 'column' },
+    },
+    modifiers: {
+      h: { prop: 'direction', value: 'row' },
+      v: { prop: 'direction', value: 'column' },
+    },
+  },
 };
 
 export function createRegistry(): Registry {
   return { ...REGISTRY };
+}
+
+/** Merge multiple registries (later override earlier at the entry level). */
+export function mergeRegistries(...registries: Registry[]): Registry {
+  return Object.assign({}, ...registries);
 }
