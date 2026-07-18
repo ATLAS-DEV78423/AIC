@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Web Formation Language — token-efficient AI-native DSL that compiles to React JSX",
   "type": "module",
+  "engines": { "node": ">=18" },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "wfl": "./dist/index.js"
   },
@@ -24,6 +26,7 @@
     "vitest": "^2.1.0"
   },
   "license": "MIT",
+  "publishConfig": { "access": "public" },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ATLAS-DEV78423/AIC.git"
