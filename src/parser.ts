@@ -143,6 +143,11 @@ export function parse(tokens: Token[]): ASTNode {
       }
     }
 
+    // Parse animations that appear after content/edits/events/state
+    while (peek()?.type === 'ANIM') {
+      animations.push(consume().value);
+    }
+
     // Parse children via > nesting, with optional [slot] prefix
     while (peek()?.type === 'CHILD') {
       consume(); // skip >
