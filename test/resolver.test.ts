@@ -12,16 +12,17 @@ function r(input: string) {
 describe('WFL Resolver', () => {
   it('resolves a simple button', () => {
     const result = r('btn::pri:"Click"');
-    expect(result.componentName).toBe('Button');
-    expect(result.props).toMatchObject({ variant: 'primary' });
+    expect(result.componentName).toBe('button');
+    expect(result.importPath).toBe('');
+    expect(result.props).toMatchObject({ type: 'button' }); // defaultProps
     expect(result.content).toBe(':"Click"');
   });
 
   it('resolves a navbar with children', () => {
     const result = r('nav::gls > btn::pri');
-    expect(result.componentName).toBe('Navbar');
+    expect(result.componentName).toBe('nav');
     expect(result.children).toHaveLength(1);
-    expect(result.children[0].componentName).toBe('Button');
+    expect(result.children[0].componentName).toBe('button');
   });
 
   it('resolves edit overrides', () => {
@@ -55,7 +56,7 @@ describe('WFL Resolver', () => {
     expect(resolved.iteration).not.toBeNull();
     expect(resolved.iteration!.kind).toBe('literal');
     expect(resolved.children).toHaveLength(1);
-    expect(resolved.children[0].componentName).toBe('Button');
+    expect(resolved.children[0].componentName).toBe('button');
   });
 
   it('resolves conditional into wrapper node', () => {
@@ -63,7 +64,7 @@ describe('WFL Resolver', () => {
     const resolved = resolve(ast, REGISTRY);
     expect(resolved.conditional).not.toBeNull();
     expect(resolved.conditional!.variable).toBe('?@user');
-    expect(resolved.children[0].componentName).toBe('Avatar');
+    expect(resolved.children[0].componentName).toBe('span');
   });
 
   it('resolves $txt edit override as content replacement', () => {

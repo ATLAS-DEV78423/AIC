@@ -124,6 +124,16 @@ These affect whether generated output actually works correctly at runtime.
 
 **Desired:** `--rsc` flag that skips useState/event handlers and generates server-compatible output.
 
+### 2.5 Self-Contained Visual Output — 🟢 Done (Phase 9.5)
+
+**Problem:** Registry entries referenced external React components (`@/components/ui/button`) that don't ship with the package. Generated output was non-functional without installing an external component library. Zero visual quality from a fresh install.
+
+**Fix:** Rewrote default registry to map WFL codes directly to HTML tags + Tailwind CSS utility classes:
+```
+btn::pri → <button className="bg-blue-600 text-white hover:bg-blue-700...">
+```
+Old component-based registry preserved as `REGISTRY_LIB` with `--lib` flag for backward compatibility.
+
 ---
 
 ## 3. Build / Output Gaps
@@ -293,6 +303,7 @@ export default function Page() {
 | **Phase 7** | Language Completeness | Nested iteration (4.1), Expression conditionals (4.3), Error recovery (4.4) |
 | **Phase 8** | DX & Ecosystem | Docs/language reference (7.1, 7.3), CLI polish, GitHub publish |
 | **Phase 9** | Production Hardening | Edge cases (6.1), Benchmarks (6.4), Fuzzing (6.2) |
+| **Phase 9.5** | **Tailwind-Native Output** | **Self-contained output (2.5)** |
 
 ---
 
@@ -306,3 +317,4 @@ export default function Page() {
 | 3 | Interactive Components | Auto state-value binding, default content |
 | **7** | **Language Completeness** | **Nested iteration (4.1), Expression conditionals (4.3), Error recovery (4.4)** |
 | **9** | **Production Hardening** | **Edge cases (6.1), Fuzzing (6.2), Benchmarks (6.4)** |
+| **9.5** | **Tailwind-Native Output** | **Self-contained HTML + Tailwind CSS (2.5)** |

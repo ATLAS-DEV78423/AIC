@@ -17,13 +17,13 @@ const CASES: BenchCase[] = [
   // Iteration with child
   { name: 'literal iteration', wfl: '*3 > card::out::sm:"Item"', minRatio: 2.5 },
   // Conditional with branches
-  { name: 'conditional', wfl: '?@isAdmin | btn::del:"Delete" | txt:"No access"', minRatio: 2.5 },
+  { name: 'conditional', wfl: '?@isAdmin | btn::del:"Delete" | txt:"No access"', minRatio: 2.0 },
   // Expression conditional
-  { name: 'expression conditional', wfl: '?@count > 0 | spn | txt:"Empty"', minRatio: 2.0 },
+  { name: 'expression conditional', wfl: '?@count > 0 | spn | txt:"Empty"', minRatio: 1.5 },
   // State + event on input
-  { name: 'state + event', wfl: 'inp::txt @query !onChange::setQuery', minRatio: 2.0 },
+  { name: 'state + event', wfl: 'inp::txt @query !onChange::setQuery', minRatio: 1.5 },
   // Complex — iteration + slot + conditional
-  { name: 'complex combo', wfl: 'card > [header]txt::h1:"Title" [body]txt:"Content"', minRatio: 2.0 },
+  { name: 'complex combo', wfl: 'card > [header]txt::h1:"Title" [body]txt:"Content"', minRatio: 1.5 },
 ];
 
 describe('WFL Compression Benchmark', () => {

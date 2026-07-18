@@ -87,8 +87,8 @@ function generateJSX(node: ResolvedComponent, imports: Import[], depth: number =
     return node.children.map(c => generateJSX(c, imports, depth)).join('\n');
   }
 
-  // Collect unique imports
-  if (!imports.some(i => i.path === node.importPath && i.name === node.componentName)) {
+  // Collect unique imports — skip for native HTML (empty importPath)
+  if (node.importPath && !imports.some(i => i.path === node.importPath && i.name === node.componentName)) {
     imports.push({ path: node.importPath, name: node.componentName });
   }
 

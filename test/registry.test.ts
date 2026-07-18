@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createRegistry, REGISTRY, mergeRegistries } from '../src/registry';
+import { createRegistry, REGISTRY, REGISTRY_LIB, mergeRegistries } from '../src/registry';
 
 describe('WFL Registry', () => {
   it('has all core components', () => {
@@ -9,22 +9,41 @@ describe('WFL Registry', () => {
     });
   });
 
-  it('btn has primary variant', () => {
+  it('btn has primary modifier with Tailwind classes', () => {
     const btn = REGISTRY['btn'];
-    expect(btn.variantProps['pri']).toBeDefined();
-    expect(btn.variantProps['pri']).toMatchObject({ variant: 'primary' });
+    const priMod = btn.modifiers['pri'];
+    expect(priMod).toBeDefined();
+    // Tailwind mode uses className-based modifiers
+    expect(priMod).toMatchObject({ className: expect.stringContaining('bg-blue-600') });
   });
 
-  it('resolves modifiers to correct props', () => {
+  it('resolves modifiers to className instead of props in Tailwind mode', () => {
     const btn = REGISTRY['btn'];
-    expect(btn.modifiers['pri']).toMatchObject({ prop: 'variant', value: 'primary' });
-    expect(btn.modifiers['lg']).toMatchObject({ prop: 'size', value: 'lg' });
+    const priMod = btn.modifiers['pri'];
+    expect('className' in priMod).toBe(true);
+    expect(typeof (priMod as any).className).toBe('string');
   });
 
-  it('stk has vertical and horizontal variants', () => {
+  it('stk has flex class modifiers', () => {
     const stk = REGISTRY['stk'];
-    expect(stk.variantProps['v']).toMatchObject({ direction: 'column' });
-    expect(stk.variantProps['h']).toMatchObject({ direction: 'row' });
+    const vMod = stk.modifiers['v'];
+    const hMod = stk.modifiers['h'];
+    expect(vMod).toMatchObject({ className: 'flex flex-col' });
+    expect(hMod).toMatchObject({ className: 'flex flex-row' });
+  });
+
+  describe('REGISTRY_LIB (legacy component mode)', () => {
+    it('btn has primary variant in REGISTRY_LIB', () => {
+      const btn = REGISTRY_LIB['btn'];
+      expect(btn.variantProps['pri']).toBeDefined();
+      expect(btn.variantProps['pri']).toMatchObject({ variant: 'primary' });
+    });
+
+    it('resolves modifiers to prop/value in REGISTRY_LIB', () => {
+      const btn = REGISTRY_LIB['btn'];
+      expect(btn.modifiers['pri']).toMatchObject({ prop: 'variant', value: 'primary' });
+      expect(btn.modifiers['lg']).toMatchObject({ prop: 'size', value: 'lg' });
+    });
   });
 
   it('createRegistry returns a copy', () => {

@@ -5,7 +5,7 @@ import { parse } from './parser.js';
 import { resolve } from './resolver.js';
 import { generate, GeneratedOutput, Import } from './generator.js';
 import { Registry } from './types.js';
-import { REGISTRY, mergeRegistries } from './registry.js';
+import { REGISTRY, REGISTRY_LIB, mergeRegistries } from './registry.js';
 
 function mergeImports(imports: Import[]): Import[] {
   const seen = new Set<string>();
@@ -79,11 +79,17 @@ if (isCli) {
     console.error('  wfl compile page.wfl                   # compile file → stdout');
     console.error('  wfl compile page.wfl --out page.tsx    # compile file → file');
     console.error('  wfl build src/ --out dist/             # compile directory');
+    console.error('  wfl --lib ...                          # use component-based registry (legacy)');
     console.error('  wfl --registry my-comps.json ...       # use custom component registry');
     process.exit(1);
   }
 
   try {
+    // --lib flag uses REGISTRY_LIB (component mode) instead of Tailwind-native REGISTRY
+    const libIdx = args.indexOf('--lib');
+    const useLib = libIdx >= 0;
+    if (useLib) args.splice(libIdx, 1);
+
     // Load custom registry if --registry flag is set
     const regIdx = args.indexOf('--registry');
     let registry: Registry | undefined;
@@ -92,7 +98,9 @@ if (isCli) {
       const regJson = JSON.parse(readFileSync(regPath, 'utf-8'));
       // Remove --registry and its value from args so they don't interfere with paths
       args.splice(regIdx, 2);
-      registry = mergeRegistries(REGISTRY, regJson);
+      registry = mergeRegistries(useLib ? REGISTRY_LIB : REGISTRY, regJson);
+    } else if (useLib) {
+      registry = REGISTRY_LIB;
     }
 
     const sub = args[0];

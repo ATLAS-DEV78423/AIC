@@ -4,22 +4,21 @@ import { parse } from '../src/parser';
 import { resolve } from '../src/resolver';
 import { generate } from '../src/generator';
 import { compile, formatComponentOutput } from '../src/index';
-import { REGISTRY } from '../src/registry';
+import { REGISTRY, REGISTRY_LIB } from '../src/registry';
 import { Registry } from '../src/types';
 
 describe('WFL Integration', () => {
-  it('compiles a nav+button end-to-end', () => {
+  it('compiles a nav+button end-to-end with Tailwind classes', () => {
     const input = 'nav::gls::fix > btn::pri::r:"Get Started"';
-    const tokens = tokenize(input);
-    const ast = parse(tokens);
-    const resolved = resolve(ast, REGISTRY);
-    const output = generate(resolved);
-
-    expect(output.imports).toContainEqual({ path: '@/components/layout/navbar', name: 'Navbar' });
-    expect(output.imports).toContainEqual({ path: '@/components/ui/button', name: 'Button' });
-    expect(output.jsx).toContain('<Navbar');
-    expect(output.jsx).toContain('<Button');
+    const output = compile(input);
+    // Native HTML tags, not component imports
+    expect(output.imports.filter(i => i.path !== 'react')).toHaveLength(0);
+    expect(output.jsx).toContain('<nav');
+    expect(output.jsx).toContain('<button');
     expect(output.jsx).toContain('Get Started');
+    // Tailwind classes present
+    expect(output.jsx).toContain('backdrop-blur');
+    expect(output.jsx).toContain('rounded-full');
   });
 
   it('measures token compression ratio', () => {
@@ -43,27 +42,27 @@ describe('WFL Integration', () => {
   it('compiles multi-line WFL into a page', () => {
     const input = 'nav::gls::fix > btn::pri::r:"Get Started"\nsec::hero::dk > txt::h1::xl:"Welcome"';
     const output = compile(input);
-    expect(output.imports).toContainEqual({ path: '@/components/layout/navbar', name: 'Navbar' });
-    expect(output.imports).toContainEqual({ path: '@/components/layout/section', name: 'Section' });
-    expect(output.jsx).toContain('<Navbar');
-    expect(output.jsx).toContain('<Section');
+    // No external component imports in Tailwind mode
+    expect(output.imports.filter(i => i.path !== 'react')).toHaveLength(0);
+    expect(output.jsx).toContain('<nav');
+    expect(output.jsx).toContain('<section');
     expect(output.jsx).toContain('<main>');
+    expect(output.jsx).toContain('Welcome');
   });
 
   it('compiles iteration *3 > btn', () => {
     const input = '*3 > btn::pri:"Item"';
     const output = compile(input);
-    const btnMatches = output.jsx.match(/<Button[ >]/g);
+    const btnMatches = output.jsx.match(/<button[ >]/g);
     expect(btnMatches).toHaveLength(3);
-    expect(output.imports).toContainEqual({ path: '@/components/ui/button', name: 'Button' });
   });
 
   it('compiles conditional ?@isAdmin | btn | txt', () => {
     const input = '?@isAdmin | btn::del:"Delete" | txt:"No access"';
     const output = compile(input);
     expect(output.jsx).toContain('{isAdmin ?');
-    expect(output.imports).toContainEqual({ path: '@/components/ui/button', name: 'Button' });
-    expect(output.imports).toContainEqual({ path: '@/components/typography/text', name: 'Text' });
+    expect(output.jsx).toContain('Delete');
+    expect(output.jsx).toContain('No access');
   });
 
   it('compiles expression conditional ?@count > 0', () => {
@@ -93,24 +92,24 @@ describe('WFL Integration', () => {
   it('compiles with custom registry', () => {
     const customReg: Registry = {
       greet: {
-        component: 'Greeting',
-        importPath: '@/components/custom/greeting',
-        defaultProps: { message: 'Hello' },
+        component: 'div',
+        importPath: '',
+        defaultProps: {},
         variantProps: {},
         modifiers: {},
+        defaultContent: 'Hello',
       },
     };
-    const output = compile('greet:"Hi"', customReg);
-    expect(output.imports).toContainEqual({ path: '@/components/custom/greeting', name: 'Greeting' });
-    expect(output.jsx).toContain('Greeting');
-    expect(output.jsx).toContain('Hi');
+    const output = compile('greet', customReg);
+    expect(output.jsx).toContain('<div');
+    expect(output.jsx).toContain('Hello');
   });
 
   it('compiles [slot] children as JSX props', () => {
     const input = 'card > [header]txt::h1:"Title" [body]txt::p:"Content"';
     const output = compile(input);
-    expect(output.jsx).toMatch(/header=\{[\s\S]*?<Text/);
-    expect(output.jsx).toMatch(/body=\{[\s\S]*?<Text/);
+    expect(output.jsx).toMatch(/header=\{[\s\S]*?<p/);
+    expect(output.jsx).toMatch(/body=\{[\s\S]*?<p/);
     expect(output.jsx).toContain('Title');
     expect(output.jsx).toContain('Content');
   });
@@ -119,7 +118,6 @@ describe('WFL Integration', () => {
     const output = compile('*@categories > *@items > card');
     expect(output.jsx).toContain('{categories.map');
     expect(output.jsx).toContain('item.items.map');
-    expect(output.imports).toContainEqual({ path: '@/components/ui/card', name: 'Card' });
   });
 
   it('rejects unknown component in custom-only registry', () => {
@@ -135,20 +133,27 @@ describe('WFL Integration', () => {
     expect(() => compile('btn', customReg)).toThrow('Unknown component token');
   });
 
+  it('uses REGISTRY_LIB for component-mode imports when explicitly passed', () => {
+    const output = compile('btn::pri:"Click"', REGISTRY_LIB);
+    expect(output.imports).toContainEqual({ path: '@/components/ui/button', name: 'Button' });
+    expect(output.jsx).toContain('<Button');
+  });
+
   describe('formatComponentOutput', () => {
-    it('wraps output in "use client" and default export', () => {
+    it('wraps Tailwind output in "use client" and default export', () => {
       const output = compile('btn::pri:"Click"');
       const file = formatComponentOutput(output);
       expect(file.startsWith('"use client"')).toBe(true);
       expect(file).toContain('export default function Page()');
-      expect(file).toContain('<Button');
+      expect(file).toContain('<button');
     });
 
-    it('includes all imports', () => {
+    it('includes no external component imports in Tailwind mode', () => {
       const output = compile('nav::gls > btn::pri:"Click"');
       const file = formatComponentOutput(output);
-      expect(file).toContain('import { Navbar } from');
-      expect(file).toContain('import { Button } from');
+      // No @/components imports in Tailwind mode
+      expect(file).not.toContain('import { Navbar }');
+      expect(file).not.toContain('import { Button }');
     });
 
     it('includes state declarations', () => {

@@ -1,8 +1,8 @@
 # AIC Development Loop — State
 
-**Last run:** 2026-07-18T15:50:00Z
-**Current phase:** Phase 9 — Production Hardening (✅ complete)
-**Tasks completed:** 3/3
+**Last run:** 2026-07-18T16:10:00Z
+**Current phase:** Phase 9.5 — Tailwind-Native Output (✅ complete)
+**Tasks completed:** 5/5
 
 ## Phase 6 Tasks
 
@@ -76,9 +76,28 @@
 - **CLI**: Verified with compiled output
 - **Fuzzing**: 200 random inputs, 0 crashes, all rejects are graceful errors
 
+## Phase 9.5 Tasks
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | Generator — skip imports for native HTML | ✅ Done | `if (node.importPath)` guard at generator.ts:91 |
+| 2 | Registry rewrite — HTML + Tailwind classes | ✅ Done | All 35 entries converted, REGISTRY_LIB preserved |
+| 3 | CLI --lib flag | ✅ Done | `--lib` → REGISTRY_LIB, `wfl --lib ...` |
+| 4 | Test updates | ✅ Done | Updated all assertions for Tailwind output |
+| 5 | Benchmark + code review | ✅ Done | Average compression 7.72×, all 316 tests pass |
+
+## Phase 9.5 Results
+
+- **Total tests**: 316 vitest — all passing ✅
+- **Test files**: 10 (same files, updated assertions)
+- **TypeScript build**: Compiles clean
+- **Benchmark**: Average compression 7.72× (up from 3.24× — Tailwind is more verbose per component)
+- **CLI**: `--lib`, `--registry`, `compile`, `build` all verified
+- **Key change**: WFL now generates self-contained HTML + Tailwind CSS — no external component library needed
+
 ## All Phases Complete
 
-All 9 phases from the gaps.md roadmap are done. WFL is production-ready:
+All 9.5 phases have been completed. WFL now ships with Tailwind-native output by default:
 
 | Phase | Focus | Status |
 |-------|-------|--------|
@@ -92,3 +111,4 @@ All 9 phases from the gaps.md roadmap are done. WFL is production-ready:
 | 7 | Language Completeness pt2 | ✅ |
 | 8 | DX & Ecosystem | ✅ |
 | 9 | Production Hardening | ✅ |
+| 9.5 | Tailwind-Native Output | ✅ |
