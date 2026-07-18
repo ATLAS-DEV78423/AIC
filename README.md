@@ -18,20 +18,30 @@ Compression ratio: **3–5×** fewer tokens than equivalent JSX. Designed for AI
 
 ---
 
+## Requirements
+
+- **Node.js ≥ 18**
+- **Tailwind CSS** (only for default registry — output uses Tailwind utility classes).
+  Add the `@tailwind` directives to your CSS and set `content: ["./src/**/*.{tsx,jsx}"]` in your Tailwind config.
+  To skip Tailwind, pass a custom registry via `--registry` or use `--lib` for the legacy component-based registry.
+
 ## Quick Start
 
 ```bash
+# Install globally
+npm install -g wfl
+
 # Run inline
-npx tsx src/index.ts 'nav::gls > btn::pri:"Click"'
+wfl 'nav::gls > btn::pri:"Click"'
 
 # Compile a file
-npx tsx src/index.ts compile page.wfl --out page.tsx
+wfl compile page.wfl --out page.tsx
 
 # Build a directory
-npx tsx src/index.ts build src/pages/ --out dist/
+wfl build src/pages/ --out dist/
 
 # Use a custom registry
-npx tsx src/index.ts --registry my-comps.json compile page.wfl
+wfl --registry my-comps.json compile page.wfl
 ```
 
 ---
@@ -282,6 +292,7 @@ wfl compile page.wfl               # compile file → stdout
 wfl compile page.wfl --out out.tsx # compile file → file
 wfl build src/ --out dist/         # compile directory
 wfl --registry reg.json compile... # use custom component registry
+wfl --lib ...                     # use legacy React component registry (instead of Tailwind HTML)
 ```
 
 ---
