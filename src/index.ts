@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { tokenize } from './lexer.js';
 import { parse } from './parser.js';

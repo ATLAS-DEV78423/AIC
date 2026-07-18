@@ -1,7 +1,7 @@
 # AIC Development Loop — State
 
-**Last run:** 2026-07-18T15:20:00Z
-**Current phase:** Phase 7 — Language Completeness (✅ complete)
+**Last run:** 2026-07-18T15:30:00Z
+**Current phase:** Phase 8 — DX & Ecosystem (✅ complete)
 **Tasks completed:** 3/3
 
 ## Phase 6 Tasks
@@ -60,9 +60,25 @@
 - **TypeScript**: Compiles clean
 - **Changes**: `generateJSX` depth parameter for scoped iteration, `resolveIteration` key propagation fix, better error messages with token positions and known-component suggestions
 
-## Phase 8 Plan
+## Phase 8 Tasks
 
-Phase 8: DX & Ecosystem — per gaps.md roadmap:
-- README / language reference (7.1, 7.3) — the docs are the DX
-- CLI polish (5.5) — watch mode if feasible
-- Publish readiness — package.json bin, GitHub push
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 1 | README / language reference (7.1, 7.3) | ✅ Done | Comprehensive README with full syntax reference, component table, CLI/API docs |
+| 2 | npm publish readiness | ✅ Done | `bin` entry, `files: ["dist"]`, shebang, repository field in package.json |
+| 3 | Push to GitHub | ✅ Done | All changes committed and pushed to origin/main |
+
+## Phase 8 Results
+
+- **Total tests**: 96 vitest — all passing ✅
+- **TypeScript build**: Compiles clean to dist/ with declarations + source maps
+- **CLI**: Works both via tsx and compiled node dist/index.js
+- **Published**: Ready for `npm publish` (run `npm run build && npm publish`)
+- **Docs**: README.md covers quick start, full syntax reference, built-in components, CLI/API docs
+
+## Phase 9 Plan
+
+Phase 9: Production Hardening — per gaps.md roadmap:
+- Edge case tests (6.1) — empty children, deep nesting, unicode, mixed whitespace
+- Compression benchmark (6.4)
+- Fuzzing harness (6.2) — basic random input fuzzer
