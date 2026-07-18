@@ -1,0 +1,17 @@
+{
+  "name": "wfl",
+  "version": "0.1.0",
+  "description": "Web Formation Language — token-efficient AI-native DSL",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "compile": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "tsx": "^4.19.0"
+  }
+}
