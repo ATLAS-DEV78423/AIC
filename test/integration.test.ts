@@ -95,7 +95,6 @@ describe('WFL Integration', () => {
         component: 'div',
         importPath: '',
         defaultProps: {},
-        variantProps: {},
         modifiers: {},
         defaultContent: 'Hello',
       },
@@ -126,7 +125,6 @@ describe('WFL Integration', () => {
         component: 'MyComp',
         importPath: './mycomp',
         defaultProps: {},
-        variantProps: {},
         modifiers: {},
       },
     };

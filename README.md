@@ -269,7 +269,6 @@ Define your own component registry and pass it via `compile(source, registry)` o
     "component": "Greeting",
     "importPath": "@/components/custom/greeting",
     "defaultProps": { "message": "Hello" },
-    "variantProps": {},
     "modifiers": {}
   }
 }
@@ -302,8 +301,9 @@ wfl --lib ...                     # use legacy React component registry (instead
 ```typescript
 import { compile, formatComponentOutput } from 'wfl';
 
-// Compile WFL to structured output
+// Compile WFL to structured output (optional second arg: custom registry)
 const output = compile('nav::gls > btn::pri:"Click"');
+const custom = compile('greet:"Hi"', myRegistry);
 console.log(output.imports); // [{path, name}, ...]
 console.log(output.jsx);     // JSX string
 console.log(output.css);     // Animation CSS
@@ -322,7 +322,7 @@ const file = formatComponentOutput(output, 'MyPage');
 # Install
 npm install
 
-# Run tests (96+ tests)
+# Run tests (316 tests)
 npm test
 
 # Watch mode

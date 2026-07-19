@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createRegistry, REGISTRY, REGISTRY_LIB, mergeRegistries } from '../src/registry';
+import { REGISTRY, REGISTRY_LIB, mergeRegistries } from '../src/registry';
 
 describe('WFL Registry', () => {
   it('has all core components', () => {
@@ -33,10 +33,10 @@ describe('WFL Registry', () => {
   });
 
   describe('REGISTRY_LIB (legacy component mode)', () => {
-    it('btn has primary variant in REGISTRY_LIB', () => {
+    it('btn has primary modifier in REGISTRY_LIB', () => {
       const btn = REGISTRY_LIB['btn'];
-      expect(btn.variantProps['pri']).toBeDefined();
-      expect(btn.variantProps['pri']).toMatchObject({ variant: 'primary' });
+      expect(btn.modifiers['pri']).toBeDefined();
+      expect(btn.modifiers['pri']).toMatchObject({ prop: 'variant', value: 'primary' });
     });
 
     it('resolves modifiers to prop/value in REGISTRY_LIB', () => {
@@ -46,23 +46,23 @@ describe('WFL Registry', () => {
     });
   });
 
-  it('createRegistry returns a copy', () => {
-    const copy = createRegistry();
+  it('spread copy of REGISTRY is independent', () => {
+    const copy = { ...REGISTRY };
     expect(copy).not.toBe(REGISTRY);
     expect(copy['btn']).toMatchObject(REGISTRY['btn']);
   });
 
   describe('mergeRegistries', () => {
     it('merges two registries (later overrides earlier)', () => {
-      const a = { btn: { component: 'OldBtn', importPath: 'old', defaultProps: {}, variantProps: {}, modifiers: {} } };
-      const b = { btn: { component: 'NewBtn', importPath: 'new', defaultProps: {}, variantProps: {}, modifiers: {} } };
+      const a = { btn: { component: 'OldBtn', importPath: 'old', defaultProps: {}, modifiers: {} } };
+      const b = { btn: { component: 'NewBtn', importPath: 'new', defaultProps: {}, modifiers: {} } };
       const merged = mergeRegistries(a, b);
       expect(merged['btn'].component).toBe('NewBtn');
     });
 
     it('keeps entries from both registries', () => {
-      const a = { existing: { component: 'A', importPath: 'a', defaultProps: {}, variantProps: {}, modifiers: {} } };
-      const b = { custom: { component: 'B', importPath: 'b', defaultProps: {}, variantProps: {}, modifiers: {} } };
+      const a = { existing: { component: 'A', importPath: 'a', defaultProps: {}, modifiers: {} } };
+      const b = { custom: { component: 'B', importPath: 'b', defaultProps: {}, modifiers: {} } };
       const merged = mergeRegistries(a, b);
       expect(merged['existing'].component).toBe('A');
       expect(merged['custom'].component).toBe('B');

@@ -33,8 +33,7 @@ export type ASTNode =
   | EventNode
   | StateNode
   | IterationNode
-  | ConditionalNode
-  | ThemeNode;
+  | ConditionalNode;
 
 // Iteration source — either a literal count or a state reference
 export interface IterationLiteral {
@@ -90,12 +89,6 @@ export interface ConditionalNode {
   falseBranch: ASTNode | null;
 }
 
-export interface ThemeNode {
-  type: 'theme';
-  category: string;   // thm, col, fnt
-  value: string;      // dark, slate.900, inter
-}
-
 // ── Resolved Tree (output of Resolver) ──
 
 /** A component prop value as it leaves the resolver (coerced to string for JSX). */
@@ -129,7 +122,6 @@ export interface RegistryEntry {
   component: string;
   importPath: string;
   defaultProps: Record<string, PropValue>;
-  variantProps: Record<string, Record<string, PropValue>>;
   modifiers: Record<string, ModifierMapping>;
   defaultContent?: string;
 }
