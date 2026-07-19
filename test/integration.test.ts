@@ -173,5 +173,29 @@ describe('WFL Integration', () => {
       expect(file).toContain('<style>');
       expect(file).toContain('@keyframes');
     });
+
+    it('coerces boolean edit props (edi $required::true)', () => {
+      const output = compile('inp::txt:"Email" edi $required::true');
+      // required={true} not required="true"
+      expect(output.jsx).toContain('required={true}');
+      expect(output.jsx).not.toContain('required="true"');
+    });
+
+    it('coerces numeric edit props (lowercase -> camelCase)', () => {
+      const output = compile('inp::txt edi $minlength::3 $maxlength::100');
+      expect(output.jsx).toContain('minLength={3}');
+      expect(output.jsx).toContain('maxLength={100}');
+    });
+
+    it('handles quoted edit values like regex patterns', () => {
+      const output = compile('inp::txt edi $pattern::"[a-z]+"');
+      expect(output.jsx).toContain('pattern="[a-z]+"');
+    });
+
+    it('auto-wraps onSubmit with e.preventDefault()', () => {
+      const output = compile('frm > btn::pri:"Submit" !onSubmit::handleSubmit');
+      expect(output.jsx).toContain('e.preventDefault()');
+      expect(output.jsx).toContain('handleSubmit(e)');
+    });
   });
 });

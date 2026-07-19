@@ -126,6 +126,15 @@ function resolveComponent(node: ComponentNode, registry: Registry): ResolvedComp
       '$gap': 'gap',
     };
 
+    // Map lowercase HTML attribute names to React camelCase props
+    // Allows users to write $minlength::3 instead of remembering $minLength::3
+    const htmlToReact: Record<string, string> = {
+      minlength: 'minLength',
+      maxlength: 'maxLength',
+      readonly: 'readOnly',
+      tabindex: 'tabIndex',
+    };
+
     if (styleMap[prop]) {
       props['style'] = `${props['style'] || ''} ${styleMap[prop]}: ${value};`.trim();
     } else if (prop === '$src' || prop === '$alt') {
@@ -135,8 +144,14 @@ function resolveComponent(node: ComponentNode, registry: Registry): ResolvedComp
       // Iteration key: store for generator to use in .map() keys
       iterationKey = value;
     } else if (prop.startsWith('$')) {
+      const propName = htmlToReact[prop.slice(1)] || prop.slice(1);
+      // Coerce boolean and numeric strings for correct React rendering
+      // ($required::true → required={true}, not required="true")
+      if (value === 'true') props[propName] = true;
+      else if (value === 'false') props[propName] = false;
+      else if (/^\d+$/.test(value)) props[propName] = parseInt(value, 10);
       // Any other $prop → pass as direct component prop
-      props[prop.slice(1)] = value;
+      else props[propName] = value;
     }
   }
 

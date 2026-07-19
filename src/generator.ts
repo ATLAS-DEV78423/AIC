@@ -143,6 +143,10 @@ function generateJSX(node: ResolvedComponent, imports: Import[], depth: number =
         callback = `(e) => ${setter}(e.target.value)`;
       }
     }
+    // Auto-preventDefault on form submit
+    if (handler === 'onSubmit') {
+      callback = `(e) => { e.preventDefault(); ${callback}(e) }`;
+    }
     return `${handler}={${callback}}`;
   }).join(' ');
 
