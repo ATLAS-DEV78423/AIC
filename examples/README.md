@@ -1,6 +1,8 @@
 # WFL Examples
 
-A gallery of Web Formation Language expressions and their compiled React/JSX output.
+> Part of the [WFL](https://github.com/ATLAS-DEV78423/AIC) project — a token-efficient AI-native DSL that compiles to React JSX / HTML+Tailwind.
+
+This gallery shows real `.wfl` expressions alongside their compiled output.
 
 ---
 

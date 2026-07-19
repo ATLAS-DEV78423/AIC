@@ -1,7 +1,7 @@
 {
   "name": "wfl",
   "version": "0.1.0",
-  "description": "Web Formation Language — token-efficient AI-native DSL that compiles to React JSX",
+  "description": "WFL — Token-efficient AI-native DSL that compiles to React JSX / HTML+Tailwind. 3-5x fewer tokens than JSX.",
   "type": "module",
   "engines": { "node": ">=18" },
   "main": "dist/index.js",
