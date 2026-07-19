@@ -20,23 +20,13 @@
 
 These affect whether generated output actually works correctly at runtime.
 
-### 1.1 Smart Event Binding — 🔴 Not started
+### 1.1 Smart Event Binding — 🟢 Done (Phase 12)
 
-**Problem:** `!onChange:setQuery` on an input with `@query` generates `onChange={setQuery}`. React calls `setQuery(event)`, which stores the event object — not `event.target.value`. Form inputs literally don't work.
+**Fix:** Generator detects `!onChange` + `@state` on same component and auto-wraps `(e) => setState(e.target.value)`. `!onSubmit` auto-wraps with `e.preventDefault()`. `!onClick` passes event directly.
 
-**Fix needed:** Generator detects state + event on same component and auto-wraps:
-```
-!onChange:setQuery  →  onChange={(e) => setQuery(e.target.value)}
-```
+### 1.2 Iteration Keys — 🟢 Done (Phase 10)
 
-**For onClick**: no wrapping needed — handler receives the event directly.
-**For onSubmit**: `onSubmit={(e) => { e.preventDefault(); handler(e) }}`
-
-### 1.2 Iteration Keys — 🔴 Not started
-
-**Problem:** `*@todos > card` generates `key={i}` (array index). React recommends stable IDs.
-
-**Desired:** `*@todos > card $key::id` generates `key={item.id}`. The `$key` edit sets what property of the iteration item to use as key. Falls back to `key={i}` when no `$key` is specified.
+**Fix:** `$key::id` stores `iterationKey` in resolver; generator emits `key={item.id}`. Falls back to `key={i}` (array index).
 
 ### 1.3 String Interpolation in Iteration Context — 🟢 Done
 
@@ -70,15 +60,9 @@ These affect whether generated output actually works correctly at runtime.
 - Multi-line event definitions: separate ev: lines
 - Let the AI include handler definitions as a companion output alongside the JSX
 
-### 1.9 Form Validation — 🔴 Not started
+### 1.9 Form Validation — 🟢 Done (Phase 12)
 
-**Problem:** No validation attributes, error states, or submission handling for form components (frm, inp, txa).
-
-**Desired:**
-- `inp::eml $required` → required attribute + validation
-- `inp $pattern::[a-z]+` → regex validation
-- `frm $onSubmit::handleSubmit` → form submission handler
-- Error state display (`chk $err::"This field is required"`)
+**Fix:** `$required::true` → boolean coercion `required={true}`. `$minlength::3` → numeric + camelCase `minLength={3}`. `$pattern::"[a-z]+"` → regex patterns via quoted values. `!onSubmit` auto-wraps with `e.preventDefault()`. `htmlToReact` map for `minlength→minLength`, `maxlength→maxLength`, `readonly→readOnly`, `tabindex→tabIndex`.
 
 ### 1.10 Async / Data Fetching — 🔴 Not started
 
@@ -138,25 +122,9 @@ Old component-based registry preserved as `REGISTRY_LIB` with `--lib` flag for b
 
 ## 3. Build / Output Gaps
 
-### 3.1 Full Component File Output — 🔴 Not started
+### 3.1 Full Component File Output — 🟢 Done (Phase 11)
 
-**Problem:** compile() returns `{ imports, jsx, css, stateCode }` as separate strings. The consumer must assemble them into a valid .tsx file.
-
-**Desired:** `compile()` option to produce a complete, valid React component file:
-```tsx
-"use client";
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-
-export default function Page() {
-  const [query, setQuery] = useState('');
-  return (
-    <div className="...">
-      <Button variant="primary">Click</Button>
-    </div>
-  );
-}
-```
+**Fix:** `formatComponentOutput(output, name?)` wraps compile output in complete `"use client"` .tsx file with imports, useState declarations, JSX, and CSS `<style>` tag.
 
 ### 3.2 Source Maps — 🔴 Not started
 
@@ -229,13 +197,9 @@ export default function Page() {
 
 **Problem:** Errors currently say things like "Unknown component token" and "Expected > after iteration". Better messages would include the position, surrounding context, and suggestions.
 
-### 5.5 CLI — 🟡 Partial
+### 5.5 CLI — 🟢 Done (Phase 11)
 
-**Problem:** CLI exists (reads from argv, prints to stdout) but lacks:
-- File input (`wfl compile page.wfl > page.tsx`)
-- Directory compilation (`wfl build src/`)
-- Watch mode (`wfl dev src/ --out dist/`)
-- Registry flag (`--registry my-registry.json`)
+**Fix:** Full CLI with `wfl compile`, `wfl build`, `--out`, `--registry`, `--lib`, `--version`/`-v`, `--help`/`-h`. Inline expression mode for ad-hoc use. Directory compilation for project-level builds.
 
 ### 5.6 IDE Integration — 🔴 Not started
 
@@ -281,9 +245,9 @@ export default function Page() {
 
 **Problem:** No guide for converting existing React components to WFL.
 
-### 7.3 Examples Gallery — 🔴 Not started
+### 7.3 Examples Gallery — 🟢 Done (Phase 11)
 
-**Problem:** No collection of example WFL expressions and their generated output.
+**Done:** 6 example `.wfl` files covering button variants, navbar, form with state/events, card grid with iteration, conditional rendering, and animated hero with CSS keyframes.
 
 ### 7.4 API Documentation — 🔴 Not started
 
@@ -291,21 +255,6 @@ export default function Page() {
 
 ---
 
-## Phase Roadmap
-
-> Phases ordered by impact-to-effort ratio. Each phase builds on the previous.
-
-| Phase | Focus | Key Gaps Addressed |
-|-------|-------|-------------------|
-| **Phase 4** | Event & Iteration Polish | Smart event binding (1.1), Iteration keys (1.2) |
-| **Phase 5** | Full Component Output | Complete .tsx file generation (3.1), CLI file I/O (5.5) |
-| **Phase 6** | Component System | Slots/named children (2.1), Extendable registry (2.2) |
-| **Phase 7** | Language Completeness | Nested iteration (4.1), Expression conditionals (4.3), Error recovery (4.4) |
-| **Phase 8** | DX & Ecosystem | Docs/language reference (7.1, 7.3), CLI polish, GitHub publish |
-| **Phase 9** | Production Hardening | Edge cases (6.1), Benchmarks (6.4), Fuzzing (6.2) |
-| **Phase 9.5** | **Tailwind-Native Output** | **Self-contained output (2.5)** |
-
----
 
 ## Completed Phases
 
@@ -318,3 +267,6 @@ export default function Page() {
 | **7** | **Language Completeness** | **Nested iteration (4.1), Expression conditionals (4.3), Error recovery (4.4)** |
 | **9** | **Production Hardening** | **Edge cases (6.1), Fuzzing (6.2), Benchmarks (6.4)** |
 | **9.5** | **Tailwind-Native Output** | **Self-contained HTML + Tailwind CSS (2.5)** |
+| **10** | **Code Cleanup** | **Removed dead code (variantProps, createRegistry, ThemeNode), cleanup (1.2)** |
+| **11** | **Production Polish** | **Comments, h1/h2/h3 TYPE fix, examples gallery (7.3), CLI polish (5.5), Full component output (3.1)** |
+| **12** | **Form Validation & Events** | **Boolean/numeric coercion, event auto-binding (1.1), form validation (1.9), htmlToReact mapping** |

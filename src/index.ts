@@ -80,11 +80,19 @@ export function formatComponentOutput(output: GeneratedOutput, componentName: st
 }
 
 // CLI
+const VERSION = '0.1.0';
 const isCli = process.argv[1]?.endsWith('index.ts') || process.argv[1]?.endsWith('index.js');
 if (isCli) {
   const args = process.argv.slice(2);
 
-  if (args.length === 0) {
+  // --version flag: print version and exit
+  if (args[0] === '--version' || args[0] === '-v') {
+    console.log(VERSION);
+    process.exit(0);
+  }
+
+  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    console.error(`wfl v${VERSION}`);
     console.error('Usage:');
     console.error('  wfl "nav::gls > btn::pri"             # inline expression → raw output');
     console.error('  wfl compile page.wfl                   # compile file → stdout');
