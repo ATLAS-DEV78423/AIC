@@ -1,5 +1,5 @@
 node_modules/
-# dist/ is committed so users can use the CLI without building
+dist/
 coverage/
 *.tsbuildinfo
 .env

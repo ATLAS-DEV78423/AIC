@@ -152,8 +152,12 @@ function generateJSX(node: ResolvedComponent, imports: Import[], depth: number =
 
   const allProps = [propsStr, eventAttrs].filter(Boolean).join(' ');
 
-  // Self-closing for no children + no content
-  if (!childrenStr && !content) {
+  // Void HTML elements must be self-closing — content/children are dropped
+  const VOID_ELEMENTS = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
+  const isVoid = VOID_ELEMENTS.has(node.componentName);
+
+  // Self-closing for no children + no content, or void elements
+  if (isVoid || (!childrenStr && !content)) {
     return `      <${node.componentName}${allProps ? ' ' + allProps : ''} />`;
   }
 

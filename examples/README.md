@@ -80,9 +80,7 @@ export default function form() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-          >
-            Type here
-          </input>
+          />
           <button type="button" className="bg-blue-600 text-white ...">
             Submit
           </button>

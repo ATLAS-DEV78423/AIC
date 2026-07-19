@@ -149,7 +149,7 @@ function resolveComponent(node: ComponentNode, registry: Registry): ResolvedComp
       // ($required::true → required={true}, not required="true")
       if (value === 'true') props[propName] = true;
       else if (value === 'false') props[propName] = false;
-      else if (/^\d+$/.test(value)) props[propName] = parseInt(value, 10);
+      else if (/^-?\d+(\.\d+)?$/.test(value)) props[propName] = value.includes('.') ? parseFloat(value) : parseInt(value, 10);
       // Any other $prop → pass as direct component prop
       else props[propName] = value;
     }

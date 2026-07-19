@@ -34,44 +34,44 @@ element::mod1::mod2:"content" > child + sibling ^ sibling edi $prop::val @state 
 
 ### Component Types
 
-35 built-in types. Default output = HTML tag + Tailwind CSS classes. With `--lib` flag = React component imports.
+34 built-in types. Default output = HTML tag + Tailwind CSS classes. With `--lib` flag = React component imports.
 
 | Code | Default Tag | Purpose | Example Modifiers |
 |------|------------|---------|-------------------|
-| `btn` | `<button>` | Button | `pri` (primary), `sec` (secondary), `gh` (ghost), `out` (outline), `lg`, `sm`, `r` (rounded) |
-| `txt` | `<p>` | Text / Typography | `h1`, `h2`, `p`, `sub` (subtitle), `cen` (center), `xl` (extra large) |
-| `nav` | `<nav>` | Navbar | `gls` (glass morphism), `fix` (fixed), `dk` (dark) |
-| `sec` | `<section>` | Section | `hero`, `dk` (dark), `feat` (features) |
-| `stk` | `<div>` | Stack (flex layout) | `v` (vertical), `h` (horizontal), `ctr` (center) |
-| `grd` | `<div>` | CSS Grid | `2` (2 cols), `3`, `4` |
-| `cnt` | `<div>` | Container | `mx` (max-width centered) |
-| `card` | `<div>` | Card | `3d` (3D shadow effect) |
-| `bge` | `<span>` | Badge | `subtle`, `pri` (primary) |
-| `ava` | `<div>` | Avatar | `sm`, `lg` |
-| `inp` | `<input>` | Input field | `txt` (text), `pwd` (password), `eml` (email) |
-| `sel` | `<select>` | Select/dropdown | — |
+| `btn` | `<button>` | Button | `pri`, `sec`, `gh`, `out`, `lg`, `sm`, `r` |
+| `txt` | `<p>` | Text / Typography | `h1`, `h2`, `p`, `sub`, `cen`, `xl` |
+| `nav` | `<nav>` | Navbar | `gls`, `fix`, `dk`, `sticky` |
+| `sec` | `<section>` | Section | `dk`, `hero` |
+| `stk` | `<div>` | Stack (flex) | `v`, `h`, `ctr`, `wrap`, `gap` |
+| `grd` | `<div>` | CSS Grid | `2`, `3`, `4` |
+| `cnt` | `<div>` | Container | `mx`, `sm`, `lg` |
+| `card` | `<div>` | Card | `out`, `sm`, `lg`, `int` |
+| `inp` | `<input>` | Input field | `txt`, `pwd`, `eml`, `num` |
+| `sel` | `<select>` | Select / dropdown | — |
 | `quote` | `<blockquote>` | Blockquote | — |
-| `hero` | `<section>` | Hero section | — |
-| `feat` | `<section>` | Feature section | — |
-| `cta` | `<section>` | Call-to-action | — |
-| `ft` | `<footer>` | Footer | — |
-| `tab` | `<div>` | Tabs container | — |
-| `lst` | `<ul>` | List | — |
-| `div` | `<hr>` | Divider | — |
-| `spn` | `<span>` | Spinner/inline | — |
-| `img` | `<img>` | Image | `rnd` (rounded), `full` (full width) |
-| `icon` | `<i>` | Icon | — |
-| `lnk` | `<a>` | Link | — |
-| `code` | `<code>` | Code block | — |
+| `hero` | `<section>` | Hero section | `cen`, `left`, `dk` |
+| `feat` | `<section>` | Feature section | `2`, `3`, `4` |
+| `cta` | `<section>` | Call to action | `cen`, `dk`, `lg` |
+| `ft` | `<footer>` | Footer | `dk`, `cen`, `sm` |
+| `tab` | `<div>` | Tabs | `h`, `v` |
+| `lst` | `<ul>` | List | `ul`, `ol`, `none`, `inline` |
+| `div` | `<hr>` | Divider | `sm`, `lg` |
+| `spn` | `<span>` | Spinner | `sm`, `lg`, `col` |
+| `img` | `<img>` | Image | `rnd`, `full`, `circle`, `shadow` |
+| `icon` | `<span>` | Icon placeholder | `sm`, `md`, `lg` |
+| `lnk` | `<a>` | Link | `pri`, `sec`, `nav` |
+| `code` | `<code>` | Code block | `block`, `inline` |
 | `h1` | `<h1>` | Heading 1 | — |
 | `h2` | `<h2>` | Heading 2 | — |
 | `h3` | `<h3>` | Heading 3 | — |
 | `frm` | `<form>` | Form | — |
-| `lbl` | `<label>` | Label | — |
-| `txa` | `<textarea>` | Textarea | — |
+| `lbl` | `<label>` | Label | `sm` |
+| `txa` | `<textarea>` | Textarea | `sm`, `lg` |
 | `chk` | `<input type="checkbox">` | Checkbox | — |
-| `swt` | `<div>` | Switch/toggle | — |
-| `rad` | `<input type="radio">` | Radio button | — |
+| `swt` | `<button>` | Switch / toggle | `sm`, `lg` |
+| `rad` | `<div>` | Radio group | `h`, `v` |
+| `bge` | `<span>` | Badge | `subtle`, `pri` |
+| `ava` | `<span>` | Avatar | `sm`, `md`, `lg` |
 
 ### Edit Overrides (`edi $prop::value`)
 
@@ -215,23 +215,22 @@ Each `[slotName]` becomes a JSX prop on the parent:
 | Token | Effect | Default Duration |
 |-------|--------|------------------|
 | `~fade` | Fade in | 300ms |
-| `~fade500` | Fade in, 500ms | 500ms |
 | `~slide` | Slide up | 300ms |
-| `~bounce` | Bounce in | 500ms |
+| `~bounce` | Bounce in | 300ms |
 | `~zoom` | Scale in | 300ms |
-| `~flip` | 3D flip | 400ms |
+| `~flip` | 3D flip | 300ms |
 | `~lift` | Float up | 300ms |
-| `~glow` | Glow pulse | 2000ms |
-| `~pulse` | Opacity pulse | 2000ms |
-| `~shake` | Shake | 400ms |
-| `~spin` | Spin | 1000ms |
+| `~glow` | Glow pulse | 300ms |
+| `~pulse` | Opacity pulse | 300ms |
+| `~shake` | Shake | 300ms |
+| `~spin` | Spin | 300ms |
 
 Duration is customizable: `~slide500` = slide over 500ms. Output includes `@keyframes` CSS and `animation-duration` inline style when non-default.
 
 ```
 btn::pri ~fade ~bounce
 ```
-→ `<button className="anim-fade anim-bounce" style="animation-duration: 500ms">`
+→ `<button className="anim-fade anim-bounce" style="animation-duration: 300ms">`
 
 ---
 

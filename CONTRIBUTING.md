@@ -24,7 +24,6 @@ npm run build
 - TypeScript, strict mode
 - No external runtime dependencies
 - Keep it simple — this is a compiler, not a framework
-- Tests go in `test/` (vitest)
 
 ## What needs help
 

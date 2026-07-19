@@ -112,42 +112,42 @@ element::mod1::mod2:"content" > child + sibling
 
 ### Component Types
 
-All 35 built-in components map to **HTML tags + Tailwind utility classes** (default mode) or **React components** (`--lib` mode).
+All 34 built-in components map to **HTML tags + Tailwind utility classes** (default mode) or **React components** (`--lib` mode).
 
 | Code | HTML Tag | Purpose | Key Modifiers |
 |------|----------|---------|--------------|
 | `btn` | `<button>` | Button | `pri`, `sec`, `gh`, `out`, `lg`, `sm`, `r` |
-| `txt` | `<p>` | Text/typography | `h1`, `h2`, `p`, `sub`, `xl`, `cen` |
-| `nav` | `<nav>` | Navbar | `gls` (glass), `fix` (fixed), `dk` |
-| `sec` | `<section>` | Section/hero | `hero`, `feat`, `dk` |
-| `stk` | `<div>` | Flex stack | `v` (vertical), `h`, `ctr` |
-| `grd` | `<div>` | CSS grid | `2`, `3`, `4` (columns) |
-| `cnt` | `<div>` | Container | `mx` (centered) |
-| `card` | `<div>` | Card | `out`, `3d` |
-| `inp` | `<input>` | Input | `txt`, `pwd`, `eml` |
+| `txt` | `<p>` | Text / typography | `h1`, `h2`, `p`, `sub`, `xl`, `cen` |
+| `nav` | `<nav>` | Navbar | `gls`, `fix`, `dk`, `sticky` |
+| `sec` | `<section>` | Section | `dk`, `hero` |
+| `stk` | `<div>` | Flex stack | `v`, `h`, `ctr`, `wrap`, `gap` |
+| `grd` | `<div>` | CSS grid | `2`, `3`, `4` |
+| `cnt` | `<div>` | Container | `mx`, `sm`, `lg` |
+| `card` | `<div>` | Card | `out`, `sm`, `lg`, `int` |
+| `inp` | `<input>` | Input | `txt`, `pwd`, `eml`, `num` |
 | `frm` | `<form>` | Form | — |
 | `h1`–`h3` | `<h1>`–`<h3>` | Headings | — |
-| `img` | `<img>` | Image | `rnd`, `full` |
+| `img` | `<img>` | Image | `rnd`, `full`, `circle`, `shadow` |
 | `bge` | `<span>` | Badge | `subtle`, `pri` |
-| `ava` | `<div>` | Avatar | `sm`, `lg` |
-| `lnk` | `<a>` | Link | — |
-| `lst` | `<ul>` | List | — |
-| `code` | `<code>` | Code | — |
-| `txa` | `<textarea>` | Textarea | — |
+| `ava` | `<span>` | Avatar | `sm`, `md`, `lg` |
+| `lnk` | `<a>` | Link | `pri`, `sec`, `nav` |
+| `lst` | `<ul>` | List | `ul`, `ol`, `none`, `inline` |
+| `code` | `<code>` | Code | `block`, `inline` |
+| `txa` | `<textarea>` | Textarea | `sm`, `lg` |
 | `chk` | `<input>` | Checkbox | — |
-| `rad` | `<input>` | Radio | — |
+| `rad` | `<div>` | Radio group | `h`, `v` |
 | `sel` | `<select>` | Select | — |
-| `swt` | `<div>` | Switch/toggle | — |
-| `lbl` | `<label>` | Label | — |
+| `swt` | `<button>` | Switch/toggle | `sm`, `lg` |
+| `lbl` | `<label>` | Label | `sm` |
 | `quote` | `<blockquote>` | Blockquote | — |
-| `tab` | `<div>` | Tabs | — |
-| `spn` | `<span>` | Spinner | — |
-| `div` | `<hr>` | Divider | — |
-| `icon` | `<i>` | Icon | — |
-| `hero` | `<section>` | Hero layout | — |
-| `feat` | `<section>` | Feature section | — |
-| `cta` | `<section>` | Call to action | — |
-| `ft` | `<footer>` | Footer | — |
+| `tab` | `<div>` | Tabs | `h`, `v` |
+| `spn` | `<span>` | Spinner | `sm`, `lg`, `col` |
+| `div` | `<hr>` | Divider | `sm`, `lg` |
+| `icon` | `<span>` | Icon placeholder | `sm`, `md`, `lg` |
+| `hero` | `<section>` | Hero layout | `cen`, `left`, `dk` |
+| `feat` | `<section>` | Feature section | `2`, `3`, `4` |
+| `cta` | `<section>` | Call to action | `cen`, `dk`, `lg` |
+| `ft` | `<footer>` | Footer | `dk`, `cen`, `sm` |
 
 ### Children & Nesting
 
@@ -255,16 +255,16 @@ btn::pri ~fade ~bounce
 |-------|--------|---------|
 | `~fade` | Fade in | 300ms |
 | `~slide` | Slide up | 300ms |
-| `~bounce` | Bounce in | 500ms |
+| `~bounce` | Bounce in | 300ms |
 | `~zoom` | Scale in | 300ms |
-| `~flip` | 3D flip | 400ms |
+| `~flip` | 3D flip | 300ms |
 | `~lift` | Float up | 300ms |
-| `~glow` | Glow pulse | 2000ms |
-| `~pulse` | Opacity pulse | 2000ms |
-| `~shake` | Shake | 400ms |
-| `~spin` | Spin | 1000ms |
+| `~glow` | Glow pulse | 300ms |
+| `~pulse` | Opacity pulse | 300ms |
+| `~shake` | Shake | 300ms |
+| `~spin` | Spin | 300ms |
 
-Custom duration: `~slide500` = slide over 500ms.
+Custom duration: append a number — `~slide500` = slide over 500ms.
 
 ---
 
@@ -306,7 +306,7 @@ See [`examples/`](examples/) for 6 runnable `.wfl` files:
 
 ## AI Training
 
-For LLMs generating WFL, see the **[complete system prompt](ai/WFL_SYSTEM_PROMPT.md)** covering the full grammar, all 35 components, events/state/conditionals, slots, animations, and output format. Drop it into any AI's system prompt for high-quality WFL generation.
+For LLMs generating WFL, see the **[complete system prompt](ai/WFL_SYSTEM_PROMPT.md)** covering the full grammar, all 34 components, events/state/conditionals, slots, animations, and output format. Drop it into any AI's system prompt for high-quality WFL generation.
 
 ---
 
