@@ -180,12 +180,18 @@ Animations generate both CSS `@keyframes` and applied CSS classes automatically.
 ## Try them yourself
 
 ```bash
+# Install WFL globally (one-time)
+npm install -g wfl
+
 # Compile any example to stdout
-npx tsx src/index.ts compile examples/button.wfl
+wfl compile examples/button.wfl
 
 # Compile and write to a file
-npx tsx src/index.ts compile examples/navbar.wfl --out navbar.tsx
+wfl compile examples/navbar.wfl --out navbar.tsx
 
 # Build all examples at once
-npx tsx src/index.ts build examples/ --out dist/
+wfl build examples/ --out dist/
+
+# Or run directly without installing
+npx wfl compile examples/button.wfl
 ```
