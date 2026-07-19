@@ -4,8 +4,15 @@ function errorAt(msg: string, token?: Token | null): string {
   return token ? `${msg} (at position ${token.position})` : msg;
 }
 
+function suggestion(msg: string, tip: string): string {
+  return `${msg}\n  💡 ${tip}`;
+}
+
 export function parse(tokens: Token[]): ASTNode {
-  if (tokens.length === 0) throw new Error('Empty WFL expression');
+  if (tokens.length === 0) throw new Error(suggestion(
+    'Empty WFL expression',
+    'Write a component like: btn::pri:"Click" or nav > btn'
+  ));
   let pos = 0;
 
   function peek(): Token | null {
@@ -13,7 +20,10 @@ export function parse(tokens: Token[]): ASTNode {
   }
 
   function consume(): Token {
-    if (pos >= tokens.length) throw new Error(`Unexpected end of input${tokens.length > 0 ? ` (after token at position ${tokens[tokens.length - 1].position})` : ''}`);
+    if (pos >= tokens.length) throw new Error(suggestion(
+      `Unexpected end of input after "${tokens[tokens.length - 1].value}"`,
+      'Add the required element after the operator, or check for a missing "'
+    ));
     return tokens[pos++];
   }
 
@@ -27,7 +37,10 @@ export function parse(tokens: Token[]): ASTNode {
         siblings.push(parseExpression());
       }
       if (peek()?.type !== 'RPAREN') {
-        throw new Error(`Expected ) after grouped expression`);
+        throw new Error(suggestion(
+          `Expected ) to close group at position ${peek()?.position ?? '?'}`,
+          'Grouped expressions wrap children: (btn::pri + btn::sec)'
+        ));
       }
       consume(); // skip )
       if (siblings.length === 0) return firstChild;
@@ -59,7 +72,10 @@ export function parse(tokens: Token[]): ASTNode {
       source = { kind: 'literal', count: parseInt(raw.slice(1), 10) };
     }
     if (peek()?.type !== 'CHILD') {
-      throw new Error(errorAt(`Expected > after iteration, got "${peek()?.value || 'EOF'}"`, peek()));
+      throw new Error(suggestion(
+        errorAt(`Expected > after iteration, got "${peek()?.value || 'EOF'}"`, peek()),
+        'Write: *3 > card or *@items > card'
+      ));
     }
     consume(); // skip >
     const child = parseExpression();
@@ -71,7 +87,10 @@ export function parse(tokens: Token[]): ASTNode {
     const variable = condToken.value;
 
     if (peek()?.type !== 'PIPE') {
-      throw new Error(errorAt(`Expected | after conditional, got "${peek()?.value || 'EOF'}"`, peek()));
+      throw new Error(suggestion(
+        errorAt(`Expected | after conditional, got "${peek()?.value || 'EOF'}"`, peek()),
+        'Write: ?@isAdmin | btn::del:"Delete" | txt:"No access"'
+      ));
     }
     consume(); // skip |
 
@@ -93,7 +112,14 @@ export function parse(tokens: Token[]): ASTNode {
       return { type: 'component', element: '', modifiers: [], animations: [], content: null, slot: null, children: [], edits: [], events: [], state: typeToken.value };
     }
     if (typeToken.type !== 'TYPE') {
-      throw new Error(`Expected component type at position ${typeToken.position}, got "${typeToken.value}"`);
+      const val = typeToken.value;
+      const tip = /^[a-z]{2,}$/.test(val)
+        ? `"${val}" is not in the registry — use a known component: btn, card, nav, txt, stk, grd, inp, etc.`
+        : `Expected a component name (like btn, nav, txt), got "${val}"`;
+      throw new Error(suggestion(
+        `Expected component type at position ${typeToken.position}, got "${val}"`,
+        tip
+      ));
     }
     const element = typeToken.value;
     const modifiers: string[] = [];

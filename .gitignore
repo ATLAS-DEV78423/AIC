@@ -12,9 +12,7 @@ debug.mjs
 test/efficiency-test.ts
 
 # Internal development artifacts
-.github/
 docs/
 loops/
 references/
-test/
 .claude/

@@ -181,7 +181,7 @@ Animations generate both CSS `@keyframes` and applied CSS classes automatically.
 
 ```bash
 # Install WFL globally (one-time)
-npm install -g wfl
+npm install -g wfl-lang
 
 # Compile any example to stdout
 wfl compile examples/button.wfl
@@ -193,5 +193,5 @@ wfl compile examples/navbar.wfl --out navbar.tsx
 wfl build examples/ --out dist/
 
 # Or run directly without installing
-npx wfl compile examples/button.wfl
+npx wfl-lang compile examples/button.wfl
 ```

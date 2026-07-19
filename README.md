@@ -4,9 +4,10 @@
 
 **Token-efficient AI-native DSL that compiles to React JSX / HTML+Tailwind**
 
-[![npm version](https://img.shields.io/badge/npm-v0.1.0-blue)](https://www.npmjs.com/package/wfl)
+[![npm version](https://img.shields.io/badge/npm-v0.1.0-blue)](https://www.npmjs.com/package/wfl-lang)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
+[![CI](https://github.com/ATLAS-DEV78423/AIC/actions/workflows/ci.yml/badge.svg)](https://github.com/ATLAS-DEV78423/AIC/actions/workflows/ci.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange)](#contributing)
 
 ```wfl
@@ -47,13 +48,13 @@ WFL isn't a replacement for React — it's a **compilation target** optimized fo
 ## Install
 
 ```bash
-npm install -g wfl
+npm install -g wfl-lang
 ```
 
 Or run directly without installing:
 
 ```bash
-npx wfl 'nav::gls > btn::pri:"Click"'
+npx wfl-lang 'nav::gls > btn::pri:"Click"'
 ```
 
 **Requirements:** Node.js ≥ 18. For default (Tailwind) output, your project needs [Tailwind CSS](https://tailwindcss.com) configured. Use `--lib` for standalone React component output without Tailwind.
