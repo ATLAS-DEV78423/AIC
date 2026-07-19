@@ -1,5 +1,5 @@
 node_modules/
-dist/
+# dist/ is committed so users can use the CLI without building
 coverage/
 *.tsbuildinfo
 .env
@@ -10,3 +10,11 @@ package-lock.json
 _loop-maker/
 debug.mjs
 test/efficiency-test.ts
+
+# Internal development artifacts
+.github/
+docs/
+loops/
+references/
+test/
+.claude/

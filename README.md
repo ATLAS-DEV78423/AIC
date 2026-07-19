@@ -1,6 +1,6 @@
 # WFL — Web Formation Language
 
-> Token-efficient AI-native DSL that compiles to React/Next.js JSX.
+> Token-efficient AI-native DSL that compiles to React JSX / HTML+Tailwind.
 
 ```
 nav::gls::fix > btn::pri::r:"Get Started"
@@ -9,345 +9,113 @@ nav::gls::fix > btn::pri::r:"Get Started"
 Compiles to:
 
 ```tsx
-<Navbar className="glass fixed">
-  <Button variant="primary" size="rounded">Get Started</Button>
-</Navbar>
+<nav className="backdrop-blur-md bg-white/10 border-b fixed top-0 left-0 right-0 z-50 px-4 py-3">
+  <button className="...rounded-full px-6">Get Started</button>
+</nav>
 ```
 
-Compression ratio: **3–5×** fewer tokens than equivalent JSX. Designed for AI generation — less prompt context for boilerplate, more for logic.
+**~3–5× fewer tokens** than equivalent JSX. Built for AI generation — less prompt space for boilerplate, more for logic.
 
 ---
 
-## Requirements
+## Install
 
-- **Node.js ≥ 18**
-- **Tailwind CSS** (only for default registry — output uses Tailwind utility classes).
-  Add the `@tailwind` directives to your CSS and set `content: ["./src/**/*.{tsx,jsx}"]` in your Tailwind config.
-  To skip Tailwind, pass a custom registry via `--registry` or use `--lib` for the legacy component-based registry.
+```bash
+npm install -g wfl
+```
+
+Or run directly without installing:
+
+```bash
+npx wfl 'nav::gls > btn::pri:"Click"'
+```
+
+**Requirements:** Node.js ≥ 18. For the default (Tailwind) output, your project needs Tailwind CSS configured. Use `--lib` for standalone React component output without Tailwind.
+
+---
 
 ## Quick Start
 
 ```bash
-# Install globally
-npm install -g wfl
-
-# Run inline
+# Inline expression → raw output
 wfl 'nav::gls > btn::pri:"Click"'
 
-# Compile a file
+# Compile a .wfl file
+wfl compile page.wfl
+
+# Compile file → .tsx output
 wfl compile page.wfl --out page.tsx
 
-# Build a directory
+# Compile a whole directory
 wfl build src/pages/ --out dist/
 
-# Use a custom registry
+# React component mode (no Tailwind)
+wfl --lib 'btn::pri:"Click"'
+
+# Use a custom component registry
 wfl --registry my-comps.json compile page.wfl
 ```
 
 ---
 
-## Syntax Reference
-
-### Component
+## Syntax
 
 ```
-<element>::<mod1>::<mod2>:"<content>"
+element::mod1::mod2:"content"   > child + sibling
 ```
 
-| Part | Example | Description |
-|------|---------|-------------|
-| `element` | `btn`, `nav`, `txt` | 2+ letter lowercase component code |
-| `::<mod>` | `::pri`, `::lg` | Variant/modifier chain |
-| `:"content"` | `:"Click me"` | Text content |
+| Concept | Syntax | Example | Output |
+|---------|--------|---------|--------|
+| **Component** | `code::mod` | `btn::pri` | `<button className="bg-blue-600...">` |
+| **Content** | `:"text"` | `btn::pri:"OK"` | `<button>OK</button>` |
+| **Child** | `>` | `nav > btn` | `<nav><button></button></nav>` |
+| **Sibling H** | `+` | `btn + btn` | `<button/><button/>` (inline) |
+| **Sibling V** | `^` | `txt ^ txt` | `<p/><p/>` (stacked) |
+| **Iteration** | `*N` or `*@state` | `*3 > card` | `{Array(3).fill(<Card/>)}` |
+| **Conditional** | `?@var \| true \| false` | `?@admin \| panel \| txt` | `{admin ? <Panel/> : <Text/>}` |
+| **State** | `@var` | `inp @query` | `const [query, setQuery] = useState('')` |
+| **Event** | `!event::handler` | `!onSubmit::handle` | `onSubmit={(e) => { e.preventDefault(); handle(e) }}` |
+| **Edit** | `edi $prop::val` | `edi $bg::#333` | `style={{ background: '#333' }}` |
+| **Slot** | `[name]child` | `card > [hdr]txt` | `header={<Text/>}` as prop |
+| **Animation** | `~name` | `btn ~fade` | CSS `@keyframes` + class |
+| **Group** | `(...)` | `nav > (a + b)` | Fragment wrapper |
+| **Comment** | `# text` | `# my nav` | Skipped |
 
-### Children / Nesting
-
-```
-parent > child
-```
-
-Siblings within a parent:
-
-```
-stk::v > txt:"A" ^ txt:"B"   # ^ = vertical sibling
-stk::h > btn:"1" + btn:"2"   # + = horizontal sibling
-```
-
-### Iteration
-
-Literal count:
-
-```
-*3 > card
-```
-
-State-driven:
-
-```
-*@items > card
-*@items > card $key::id   # use item.id as React key
-```
-
-Nested:
-
-```
-*@categories > *@items > card
-```
-
-Outputs:
-
-```tsx
-{categories.map((item, i) => <>
-  {item.items.map((item, j) => <>
-    <Card />
-  </>)}
-</>)}
-```
-
-### Conditionals
-
-Truthy check:
-
-```
-?@isAdmin | btn::del:"Delete" | txt:"No access"
-```
-
-Expression (supported operators: `>`, `<`, `>=`, `<=`, `==`, `!=`):
-
-```
-?@count > 0 | spn | txt:"Empty"
-?@role == 'admin' | btn::pri:"Panel" | txt:"Guest"
-```
-
-Without false branch (renders `&&`):
-
-```
-?@loading | spn
-```
-
-### State
-
-```
-@<varName>
-```
-
-On an input — auto-binds `value` and generates `useState`:
-
-```
-inp::txt @query
-```
-
-Generates:
-
-```tsx
-const [query, setQuery] = useState('');
-// ...
-<input value={query} onChange={(e) => setQuery(e.target.value)} />
-```
-
-### Events
-
-```
-!<handler>::<callback>
-```
-
-Smart binding — `onChange` with matching state setter auto-wraps `(e) => setter(e.target.value)`:
-
-```
-inp @query !onChange::setQuery
-```
-
-### Edit Overrides
-
-```
-edi $<prop>::<value>
-```
-
-| Prop | CSS / Behavior | Example |
-|------|---------------|---------|
-| `$bg` | `background` | `edi $bg::#ff5733` |
-| `$col` | `color` | `edi $col::#333` |
-| `$pd` | `padding` | `edi $pd::12px` |
-| `$mg` | `margin` | `edi $mg::8px` |
-| `$w` | `width` | `edi $w::100%` |
-| `$h` | `height` | `edi $h::200px` |
-| `$fs` | `font-size` | `edi $fs::1.5rem` |
-| `$fw` | `font-weight` | `edi $fw::bold` |
-| `$br` | `border-radius` | `edi $br::8px` |
-| `$gap` | `gap` | `edi $gap::16px` |
-| `$txt` | Text content override | `edi $txt::"New text"` |
-| `$src` | `src` prop | `edi $src::/image.png` |
-| `$alt` | `alt` prop | `edi $alt::"Description"` |
-| `$key` | React key in iteration | `*@items > card $key::id` |
-
-### Slots (Named Children)
-
-```
-card > [header]txt::h1:"Title" [body]txt:"Content" [footer]btn:"OK"
-```
-
-Each `[slotName]` child becomes a JSX prop — rendered as `header={<Text>…</Text>}` on the parent.
-
-### Animations
-
-```
-btn::pri ~fade300 ~bounce
-```
-
-| Animation | Default |
-|-----------|---------|
-| `~fade` | 300ms |
-| `~fade<N>` | N ms |
-| `~slide` | 300ms |
-| `~bounce` | 500ms |
-
-### Parenthesized Groups
-
-```
-nav > (btn::pri + btn::sec)
-```
-
-Groups multiple children under one parent without a wrapper component.
-
-### Comments
-
-```
-# this is a comment
-nav::gls > btn::pri:"Click"  # inline comment
-```
-
-Lines starting with `# ` are skipped.
-
-### Multi-line Pages
-
-```
-nav::gls::fix > btn::pri:"Get Started"
-sec::hero::dk > txt::h1::xl:"Welcome"
-```
-
-Each line is a top-level expression. Multi-line output wraps in `<main>`.
+See [`examples/`](examples/) for runnable `.wfl` files.
 
 ---
 
-## Built-in Components
+## Key Features
 
-| Code | Component | Import |
-|------|-----------|--------|
-| `btn` | `Button` | `@/components/ui/button` |
-| `txt` | `Text` | `@/components/typography/text` |
-| `nav` | `Navbar` | `@/components/layout/navbar` |
-| `sec` | `Section` | `@/components/layout/section` |
-| `stk` | `Stack` | `@/components/layout/stack` |
-| `spn` | `Spinner` | `@/components/ui/spinner` |
-| `img` | `Image` | `@/components/ui/image` |
-| `inp` | `Input` | `@/components/form/input` |
-| `txa` | `Textarea` | `@/components/form/textarea` |
-| `chk` | `Checkbox` | `@/components/form/checkbox` |
-| `sel` | `Select` | `@/components/form/select` |
-| `frm` | `Form` | `@/components/form/form` |
-| `ico` | `Icon` | `@/components/ui/icon` |
-| `ava` | `Avatar` | `@/components/ui/avatar` |
-| `bad` | `Badge` | `@/components/ui/badge` |
-| `card` | `Card` | `@/components/ui/card` |
-| `div` | `Divider` | `@/components/ui/divider` |
-| `list` | `List` | `@/components/ui/list` |
-| `tabs` | `Tabs` | `@/components/ui/tabs` |
-| `hero` | `Hero` | `@/components/layout/hero` |
-| `cta` | `CTA` | `@/components/layout/cta` |
-| `feature` | `FeatureSection` | `@/components/layout/feature-section` |
-| `footer` | `Footer` | `@/components/layout/footer` |
+- **Tailwind-native output** — default registry maps to HTML tags + Tailwind utility classes. Zero external component deps.
+- **React component mode** — `--lib` flag outputs clean React component JSX with imports.
+- **Custom registries** — bring your own component library via `--registry my-comps.json`.
+- **Animations** — 10 built-in CSS animations (`~fade`, `~slide`, `~bounce`, `~zoom`, `~flip`, `~lift`, `~glow`, `~pulse`, `~shake`, `~spin`).
+- **Smart event binding** — `onChange` + `@state` auto-wraps `(e) => setState(e.target.value)`. `onSubmit` auto-wraps `e.preventDefault()`.
+- **TypeScript** — full type definitions included.
 
 ---
 
-## Custom Components
-
-Define your own component registry and pass it via `compile(source, registry)` or the `--registry` CLI flag:
-
-```json
-{
-  "greet": {
-    "component": "Greeting",
-    "importPath": "@/components/custom/greeting",
-    "defaultProps": { "message": "Hello" },
-    "modifiers": {}
-  }
-}
-```
-
-```bash
-wfl --registry my-comps.json 'greet:"Hi"'
-```
-
-Custom registries merge with the built-in registry (your entries override built-in ones).
-
----
-
-## CLI Reference
-
-```
-wfl                                # show usage
-wfl "nav > btn::pri"               # inline expression → raw output
-wfl compile page.wfl               # compile file → stdout
-wfl compile page.wfl --out out.tsx # compile file → file
-wfl build src/ --out dist/         # compile directory
-wfl --registry reg.json compile... # use custom component registry
-wfl --lib ...                     # use legacy React component registry (instead of Tailwind HTML)
-```
-
----
-
-## API Reference
+## API
 
 ```typescript
 import { compile, formatComponentOutput } from 'wfl';
 
-// Compile WFL to structured output (optional second arg: custom registry)
+// Compile WFL to structured output
 const output = compile('nav::gls > btn::pri:"Click"');
-const custom = compile('greet:"Hi"', myRegistry);
-console.log(output.imports); // [{path, name}, ...]
-console.log(output.jsx);     // JSX string
-console.log(output.css);     // Animation CSS
+console.log(output.jsx);      // JSX string
+console.log(output.css);      // Animation CSS
 console.log(output.stateCode); // useState declarations
 
-// Wrap in complete .tsx component file
+// Wrap in a complete .tsx file
 const file = formatComponentOutput(output, 'MyPage');
-// → "use client"\nimport...\nexport default function MyPage() { ... }
 ```
 
 ---
 
-## Development
+## AI Training
 
-```bash
-# Install
-npm install
-
-# Run tests (316 tests)
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Build
-npm run build
-
-# TypeScript check
-npx tsc --noEmit
-```
-
----
-
-## Why WFL?
-
-WFL is built for the AI-native development workflow:
-
-| Problem | WFL Solution |
-|---------|-------------|
-| AI models waste context on JSX boilerplate | 3–5× token compression |
-| Generated layouts need manual fixing | Declarative nesting + siblings |
-| Props and styles are verbose | `::mod` chain + `edi $prop::value` |
-| State/events require multiple lines | `@var` + `!onChange` on one line |
-| Iteration in JSX is noisy | `*@items > card` |
+If you're training an AI model to generate WFL, see [`ai/WFL_SYSTEM_PROMPT.md`](ai/WFL_SYSTEM_PROMPT.md) — a complete system prompt template covering the full grammar, all 35 components, and examples.
 
 ---
 
