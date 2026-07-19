@@ -9,7 +9,6 @@ coverage/
 package-lock.json
 _loop-maker/
 debug.mjs
-test/efficiency-test.ts
 
 # Internal development artifacts
 docs/

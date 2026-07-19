@@ -21,7 +21,7 @@ export function parse(tokens: Token[]): ASTNode {
 
   function consume(): Token {
     if (pos >= tokens.length) throw new Error(suggestion(
-      `Unexpected end of input after "${tokens[tokens.length - 1].value}"`,
+      `Unexpected end of input after "${tokens[tokens.length - 1].value}" (at position ${tokens[tokens.length - 1].position})`,
       'Add the required element after the operator, or check for a missing "'
     ));
     return tokens[pos++];
@@ -117,7 +117,7 @@ export function parse(tokens: Token[]): ASTNode {
         ? `"${val}" is not in the registry — use a known component: btn, card, nav, txt, stk, grd, inp, etc.`
         : `Expected a component name (like btn, nav, txt), got "${val}"`;
       throw new Error(suggestion(
-        `Expected component type at position ${typeToken.position}, got "${val}"`,
+        errorAt(`Expected component type`, typeToken),
         tip
       ));
     }

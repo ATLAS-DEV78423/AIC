@@ -92,7 +92,7 @@ if (isCli) {
   }
 
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-    console.error(`wfl v${VERSION}`);
+    console.error(`wfl-lang v${VERSION}`);
     console.error('Usage:');
     console.error('  wfl "nav::gls > btn::pri"             # inline expression → raw output');
     console.error('  wfl compile page.wfl                   # compile file → stdout');
