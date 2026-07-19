@@ -1,45 +1,34 @@
 # AIC Development Loop — State
 
-**Last run:** 2026-07-18T21:30:00Z
-**Current phase:** Phase 10 — Production Readiness (✅ complete)
-**Tasks completed:** 4/4
+**Last run:** 2026-07-19T20:20:00Z
+**Current phase:** Phase 11 — Production Polish (✅ complete)
+**Tasks completed:** 3/3
 
-## Phase 10 Tasks (Production Readiness)
+## Phase 11 Tasks (Production Polish)
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 1 | Publish-ready package config + CI | ✅ Done | `types`, `engines`, `publishConfig`, `.github/workflows/ci.yml` |
-| 2 | Clean working tree | ✅ Done | `debug-tokens.ts` removed, `efficiency-test.ts` gitignored |
-| 3 | README polish | ✅ Done | Tailwind requirement, API ref with `compile(source, registry?)`, custom registry JSON |
-| 4 | Code review + registry cleanup | ✅ Done | Removed dead `variantProps`, `ThemeNode`, `createRegistry()` |
+| 1 | Registry cleanup commit | ✅ Done | `variantProps`/`ThemeNode`/`createRegistry` removed, committed |
+| 2 | Error messages + CLI polish | ✅ Done | Source line context in compile errors, comment lines handled |
+| 3 | Examples gallery + TYPE fix | ✅ Done | 6 examples with compiled output, TYPE regex accepts h1/h2/h3 |
 
-## Phase 10 Results
+## Phase 11 Results
 
-- **Total tests**: 316 vitest — all passing ✅
+- **Total tests**: 317 vitest — all passing ✅
 - **TypeScript**: Compiles clean
-- **CI**: Node 18/20/22 matrix on push/PR to main
-- **Registry cleanup**: Dropped unused `variantProps`/`ThemeNode`/`createRegistry` — modifiers-only model
+- **New file**: `examples/` directory with 6 .wfl files + README gallery
+- **Fixes**:
+  - TYPE regex now accepts alphanumeric codes (`h1`, `h2`, `h3`)
+  - Comment-only lines (`# ...`) filtered out in compile() instead of throwing
+  - Compile errors show the source line with `^` position marker
+  - CLI error output shows formatted source context
 
 ## All Phases Complete
 
-All phases (0–10) complete. WFL is production-ready:
-
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 0 | Core DSL | ✅ |
-| 1 | Animations & Registry | ✅ |
-| 2 | Language Completeness | ✅ |
-| 3 | Interactive Components | ✅ |
-| 4 | Event & Iteration Polish | ✅ |
-| 5 | Full Component Output | ✅ |
-| 6 | Component System | ✅ |
-| 7 | Language Completeness pt2 | ✅ |
-| 8 | DX & Ecosystem | ✅ |
-| 9 | Production Hardening | ✅ |
-| 9.5 | Tailwind-Native Output | ✅ |
-| **10** | **Production Readiness** | ✅ |
-
-**Exit predicate met:** tests pass, TypeScript compiles, CI configured, README polished, package publish-ready.
+| 0 – 10 | (all prior) | ✅ |
+| **11** | **Production Polish** | ✅ |
 
 ## Phase 6 Tasks
 

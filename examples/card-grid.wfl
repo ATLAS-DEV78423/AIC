@@ -1,0 +1,2 @@
+# Card grid using literal iteration (3 items)
+sec::feat > txt::h1:"Features" ^ grd::3 > *3 > card::out > txt::p:"Card content"

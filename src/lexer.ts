@@ -26,7 +26,7 @@ const patterns: Pattern[] = [
   { type: 'SLOT', regex: /^\[[a-zA-Z_][a-zA-Z0-9_]*\]/ },
   { type: 'ANIM', regex: /^~[a-zA-Z][a-zA-Z0-9]*/ },
   // TYPE matches known component codes (2-4 letter lowercase) when followed by an operator or end-of-input
-  { type: 'TYPE', regex: /^[a-z]{2,}(?=::|>|\+|\^|\||:|\s|$)/ },
+  { type: 'TYPE', regex: /^[a-z][a-z0-9]+(?=::|>|\+|\^|\||:|\s|$)/ },
   // MOD catches everything else (modifier values, identifiers) after :: or where TYPE doesn't match
   { type: 'MOD', regex: /^[a-zA-Z0-9#][a-zA-Z0-9#.-]*/ },
 ];

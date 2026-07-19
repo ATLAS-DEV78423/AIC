@@ -1,0 +1,3 @@
+# Form with state, events, and auto-binding
+@query
+frm > stk::v > lbl:"Search" ^ inp::txt:"Type here" @query !onChange::setQuery ^ btn::pri:"Submit"

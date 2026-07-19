@@ -1,0 +1,5 @@
+# Button variants — modifiers change appearance
+btn::pri:"Get Started"
+btn::sec:"Learn More"
+btn::gh:"Cancel"
+btn::out:"Download"

@@ -1,0 +1,2 @@
+# Animated hero section with slide-in text and fade-in CTA
+hero::cen > stk::v::ctr > txt::h1 ~slide:"Build Something Great" ^ txt::p ~fade:"Start your journey today" ^ btn::pri ~bounce:"Get Started"

@@ -1,0 +1,2 @@
+# Conditional rendering — shows "Welcome back" or "Sign in"
+?@user | txt::h1:"Welcome back!" | btn::pri:"Sign In"

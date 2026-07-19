@@ -19,14 +19,25 @@ function mergeImports(imports: Import[]): Import[] {
 
 export function compile(wflSource: string, registry?: Registry): GeneratedOutput {
   const reg = registry || REGISTRY;
-  const lines = wflSource.split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = wflSource.split('\n').map(l => l.trim()).filter(l => Boolean(l) && !l.startsWith('#'));
   if (lines.length === 0) throw new Error('Empty WFL expression');
 
   const results = lines.map(line => {
-    const tokens = tokenize(line);
-    const ast = parse(tokens);
-    const resolved = resolve(ast, reg);
-    return generate(resolved);
+    try {
+      const tokens = tokenize(line);
+      const ast = parse(tokens);
+      const resolved = resolve(ast, reg);
+      return generate(resolved);
+    } catch (err: any) {
+      const msg = err.message || String(err);
+      const posMatch = msg.match(/at position (\d+)/);
+      if (posMatch) {
+        const pos = parseInt(posMatch[1], 10);
+        const marker = ' '.repeat(Math.max(0, pos)) + '^';
+        throw new Error(`${msg}\n  ${line}\n  ${marker}`);
+      }
+      throw new Error(`${msg}\n  In expression: "${line}"`);
+    }
   });
 
   if (results.length === 1) return results[0];
@@ -156,7 +167,8 @@ if (isCli) {
       }
     }
   } catch (err: any) {
-    console.error('Compilation error:', err.message);
+    const msg = err.message || String(err);
+    console.error(`\n  ${msg.replace(/\n/g, '\n  ')}\n`);
     process.exit(1);
   }
 }

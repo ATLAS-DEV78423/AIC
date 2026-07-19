@@ -1,0 +1,2 @@
+# Navigation bar with links and CTA button
+nav::gls::fix > lnk:"Home" ^ lnk::pri:"Features" ^ lnk:"Pricing" ^ btn::pri:"Sign Up"

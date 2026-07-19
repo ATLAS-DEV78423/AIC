@@ -12,6 +12,18 @@ describe('WFL Lexer', () => {
     ]);
   });
 
+  it('tokenizes h2 component type (alphanumeric)', () => {
+    const tokens = tokenize('h2:"Title"');
+    expect(tokens).toEqual([
+      { type: 'TYPE', value: 'h2', position: 0 },
+      { type: 'CONTENT', value: ':"Title"', position: 2 },
+    ]);
+    // Also verify h2 followed by child/pipe/sibling works
+    expect(tokenize('h2:"A" ^ txt::p:"B"')[0].type).toBe('TYPE');
+    expect(tokenize('h2:"A" > btn')[0].type).toBe('TYPE');
+    expect(tokenize('h2:"A" + btn')[0].type).toBe('TYPE');
+  });
+
   it('tokenizes child nesting with >', () => {
     const tokens = tokenize('nav > btn');
     expect(tokens).toEqual([
