@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "WFL — Token-efficient AI-native DSL that compiles to React JSX / HTML+Tailwind. 3-5x fewer tokens than JSX.",
   "type": "module",
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -20,10 +22,13 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.10"
   },
   "license": "MIT",
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ATLAS-DEV78423/AIC.git"

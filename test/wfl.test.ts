@@ -52,7 +52,7 @@ describe('tokenize', () => {
   });
 
   it('handles groups', () => {
-    const tokens = tokenize('nav > (a + b)');
+    const tokens = tokenize('nav > (btn + card)');
     expect(tokens.map(t => t.type)).toEqual(['TYPE', 'CHILD', 'LPAREN', 'TYPE', 'SIBLING_H', 'TYPE', 'RPAREN']);
   });
 
@@ -151,10 +151,10 @@ describe('compile', () => {
     expect(result.jsx).toContain('onChange');
   });
 
-  it('compiles iteration', () => {
+  it('compiles literal iteration', () => {
     const result = compile('*3 > card::out');
-    expect(result.jsx).toContain('map');
-    expect(result.jsx).toContain('React.Fragment');
+    const matches = result.jsx.match(/<div/g);
+    expect(matches).toHaveLength(3);
   });
 
   it('compiles conditional', () => {
